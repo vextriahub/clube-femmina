@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+<!-- VERSION: 2.0.3 - FINAL MOBILE FIX -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Clube Femmina – Benefício Popular</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -844,9 +845,10 @@
 
   /* Responsive adjustments */
   @media (max-width:960px) {
-    .auth-side { display:block !important; visibility: visible !important; }
-    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; }
+    .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; }
+    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; }
     .home-col-right { margin-top: 40px; }
+    .auth-form-side { width: 100% !important; min-width: unset !important; }
   }
   @media (max-width:480px) {
     .home-headline { font-size: 28px !important; }
