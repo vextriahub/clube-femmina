@@ -527,12 +527,21 @@
     scrollbar-color:rgba(255,255,255,.12) transparent;
   }
   @media (max-width: 640px) {
-    .home-scroll { padding: 24px 20px 40px; }
-    .hero-section { min-height: auto !important; padding-top: 80px !important; }
-    .home-logo { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 16px 20px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .home-scroll { padding: 0 20px 40px; }
+    .hero-section { min-height: auto !important; padding-top: 100px !important; }
+    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 16px 20px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
+    .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; }
     .home-headline { font-size: 32px !important; line-height: 1.2 !important; }
     .home-price-hero { flex-direction: column; gap: 20px; text-align: center; }
     .home-price-badge { margin: 0 auto; }
+  }
+  .home-header-nav {
+    position: absolute; top: 36px; left: 48px; right: 48px; z-index: 10;
+    display:flex; justify-content:space-between; align-items:flex-start;
+  }
+  .btn-access-account {
+    background:#fff; color:#0D5BAE; font-weight:600; padding:10px 24px;
+    border-radius:100px; box-shadow:0 8px 24px rgba(0,0,0,0.15); border: none; cursor: pointer;
   }
   .home-scroll::-webkit-scrollbar{width:4px;}
   .home-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:100px;}
@@ -831,13 +840,14 @@
   #login-tabs { margin-bottom:24px; }
   #login-tabs .tab { font-size:14px; padding:8px 20px; }
 
-  /* Responsive */
+  /* Responsive adjustments */
   @media (max-width:960px) {
-    .auth-side { display:none; }
-    .auth-form-side { width:100%; min-width:unset; box-shadow:none; }
+    .auth-side { display:block; }
+    .home-layout-grid { grid-template-columns: 1fr; gap: 40px; }
   }
+  /* Clean up legacy responsive rules */
   @media (max-width:480px) {
-    .auth-form-side { padding:32px 24px; }
+    .home-headline { font-size: 28px !important; }
   }
 
 
@@ -971,14 +981,14 @@ function updateDashboardBanner() {
 
 
       <!-- Top Action / Header -->
-      <div style="position: absolute; top: 36px; left: 48px; right: 48px; z-index: 10; display:flex; justify-content:space-between; align-items:flex-start;">
+      <div class="home-header-nav">
         <div class="home-logo" style="margin:0; max-width:none;">
           <div>
             <div class="home-logo-name">Clube Femmina</div>
             <div class="home-logo-sub">Benefício Popular</div>
           </div>
         </div>
-        <button class="btn btn-primary" style="background:#fff; color:#0D5BAE; font-weight:600; padding:10px 24px; border-radius:100px; box-shadow:0 8px 24px rgba(0,0,0,0.15);" onclick="document.getElementById('auth-modal').style.display='flex'">Acessar minha conta</button>
+        <button class="btn btn-primary btn-access-account" onclick="document.getElementById('auth-modal').style.display='flex'">Acessar minha conta</button>
       </div>
 
 
