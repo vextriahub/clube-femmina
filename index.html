@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.0.5 - FORCED VISIBILITY FIX -->
+<!-- VERSION: 2.0.6 - CONTENT VISIBILITY & BUTTON FIX -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -530,10 +530,10 @@
     scrollbar-color:rgba(255,255,255,.12) transparent;
   }
   @media (max-width: 640px) {
-    .home-scroll { padding: 0 20px 40px; }
-    .hero-section { min-height: auto !important; padding-top: 100px !important; }
-    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 16px 20px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
-    .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; }
+    .home-scroll { padding: 80px 20px 40px !important; display: block !important; height: auto !important; min-height: 100vh !important; }
+    .hero-section { min-height: auto !important; padding-top: 20px !important; display: block !important; visibility: visible !important; }
+    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 12px 20px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
+    .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; display: block !important; }
     .home-headline { font-size: 32px !important; line-height: 1.2 !important; }
     .home-price-hero { flex-direction: column; gap: 20px; text-align: center; }
     .home-price-badge { margin: 0 auto; }
@@ -845,11 +845,12 @@
 
   /* Responsive adjustments - FORCED VISIBILITY */
   @media (max-width:960px) {
-    .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; }
+    .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; overflow-y: visible !important; }
     .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 20px !important; display: block !important; }
     .home-col-right { margin-top: 40px !important; display: block !important; }
     .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; display: flex !important; }
-    .home-scroll { display: block !important; overflow-y: auto !important; height: auto !important; }
+    .home-scroll { display: block !important; overflow-y: auto !important; height: auto !important; min-height: 100vh !important; }
+    .hero-section, .landing-section, .footer-cta { display: block !important; visibility: visible !important; opacity: 1 !important; }
   }
   @media (max-width:480px) {
     .home-headline { font-size: 28px !important; }
