@@ -526,6 +526,14 @@
     scrollbar-width:thin;
     scrollbar-color:rgba(255,255,255,.12) transparent;
   }
+  @media (max-width: 640px) {
+    .home-scroll { padding: 24px 20px 40px; }
+    .hero-section { min-height: auto !important; padding-top: 80px !important; }
+    .home-logo { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 16px 20px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .home-headline { font-size: 32px !important; line-height: 1.2 !important; }
+    .home-price-hero { flex-direction: column; gap: 20px; text-align: center; }
+    .home-price-badge { margin: 0 auto; }
+  }
   .home-scroll::-webkit-scrollbar{width:4px;}
   .home-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:100px;}
 
@@ -1995,75 +2003,93 @@ function initSidebarParticles() {
 // ── SUPABASE CONFIG ───────────────────────────────────
 const SUPABASE_URL = 'https://luwgrbwfnemfpcrglcdp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1d2dyYndmbmVtZnBjcmdsY2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwODQ5NjUsImV4cCI6MjA5MzY2MDk2NX0.AMSFQ6aLozWZyZY8NOQZt3npwU1Wofc1M7UbniPZQoE';
-const supabase = typeof supabaseJS !== 'undefined' ? supabaseJS.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-// Fallback if CDN fails or variable is different
-const _supabase = (typeof supabase !== 'undefined' && supabase.from) ? supabase : (typeof supabaseJS !== 'undefined' ? supabaseJS.createClient(SUPABASE_URL, SUPABASE_KEY) : null);
 
-// Note: The CDN uses "supabase" global if using UMD. If using latest, it might be supabaseJS.
-// Let's use a safer init:
-const client = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let client = null;
+function getClient() {
+  if (client) return client;
+  if (window.supabase && window.supabase.createClient) {
+    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } else if (window.supabaseJS && window.supabaseJS.createClient) {
+    client = window.supabaseJS.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+  return client;
+}
 
 // ── DATABASE (Supabase-backed) ────────────────────────
 const DB = {
   async getUsers() {
-    const { data, error } = await client.from('users').select('*');
+    const c = getClient();
+    if (!c) return [];
+    const { data, error } = await c.from('users').select('*');
     if (error) { console.error('Error fetching users:', error); return []; }
     return data || [];
   },
   async getAdmins() {
-    const { data, error } = await client.from('admins').select('*');
+    const c = getClient();
+    if (!c) return [];
+    const { data, error } = await c.from('admins').select('*');
     if (error) { console.error('Error fetching admins:', error); return []; }
     return data || [];
   },
   async getDependents() {
-    const { data, error } = await client.from('dependents').select('*');
+    const c = getClient();
+    if (!c) return [];
+    const { data, error } = await c.from('dependents').select('*');
     if (error) { console.error('Error fetching dependents:', error); return []; }
     return data || [];
   },
   async getAppointments() {
-    const { data, error } = await client.from('appointments').select('*');
+    const c = getClient();
+    if (!c) return [];
+    const { data, error } = await c.from('appointments').select('*');
     if (error) { console.error('Error fetching appointments:', error); return []; }
     return data || [];
   },
   async saveUser(user) {
-    const { data, error } = await client.from('users').upsert(user).select();
+    const c = getClient();
+    if (!c) throw new Error('Supabase client not initialized');
+    const { data, error } = await c.from('users').upsert(user).select();
     if (error) throw error;
     return data;
   },
   async saveDependent(dep) {
-    const { data, error } = await client.from('dependents').upsert(dep).select();
+    const c = getClient();
+    if (!c) throw new Error('Supabase client not initialized');
+    const { data, error } = await c.from('dependents').upsert(dep).select();
     if (error) throw error;
     return data;
   },
   async saveAppointment(appt) {
-    const { data, error } = await client.from('appointments').upsert(appt).select();
+    const c = getClient();
+    if (!c) throw new Error('Supabase client not initialized');
+    const { data, error } = await c.from('appointments').upsert(appt).select();
     if (error) throw error;
     return data;
   }
 };
 
 async function initDB() {
-  // Check if data already exists
-  const { count, error } = await client.from('users').select('*', { count: 'exact', head: true });
-  if (count === 0 && !error) {
-    console.log('Seeding Supabase with initial data...');
-    // Mock data from earlier logic
-    const initialUsers = [
-      { nome: 'João Silva Santos', cpf: '123.456.789-01', telefone: '(85) 99999-0001', email: 'joao@email.com', password: '123456', numero_carteirinha: 'CF-000001', status_pagamento: 'active', role: 'member', asaas_id: 'cus_001', created_at: '2024-01-15' },
-      { nome: 'Maria Oliveira Costa', cpf: '234.567.890-12', telefone: '(85) 98888-0002', email: 'maria@email.com', password: '123456', numero_carteirinha: 'CF-000002', status_pagamento: 'pending', role: 'member', asaas_id: 'cus_002', created_at: '2024-02-20' },
-      { nome: 'Ana Paula Ferreira', cpf: '345.678.901-23', telefone: '(85) 97777-0003', email: 'ana@email.com', password: '123456', numero_carteirinha: 'CF-000003', status_pagamento: 'active', role: 'member', asaas_id: 'cus_003', created_at: '2024-03-10' },
-      { nome: 'Carlos Eduardo Lima', cpf: '456.789.012-34', telefone: '(85) 96666-0004', email: 'carlos@email.com', password: '123456', numero_carteirinha: 'CF-000004', status_pagamento: 'inactive', role: 'member', asaas_id: 'cus_004', created_at: '2024-01-05' },
-    ];
-    await client.from('users').insert(initialUsers);
-
-    const initialAdmins = [
-      { nome: 'Administrador Femmina', email: 'admin@femmina.com', password: '123456', role: 'admin' },
-      { nome: 'Ana Atendente', email: 'atendente@femmina.com', password: '123456', role: 'admin' },
-    ];
-    await client.from('admins').insert(initialAdmins);
-    
-    // Note: Dependents and Appointments would need proper foreign keys (UUIDs)
-    // For seeding simplicity in this mock, we might skip them or map manually.
+  const c = getClient();
+  if (!c) { console.warn('Supabase not ready for initDB'); return; }
+  try {
+    const { count, error } = await c.from('users').select('*', { count: 'exact', head: true });
+    if (count === 0 && !error) {
+      console.log('Seeding Supabase with initial data...');
+      const initialUsers = [
+        { nome: 'João Silva Santos', cpf: '123.456.789-01', telefone: '(85) 99999-0001', email: 'joao@email.com', password: '123456', numero_carteirinha: 'CF-000001', status_pagamento: 'active', role: 'member', asaas_id: 'cus_001', created_at: '2024-01-15' },
+        { nome: 'Maria Oliveira Costa', cpf: '234.567.890-12', telefone: '(85) 98888-0002', email: 'maria@email.com', password: '123456', numero_carteirinha: 'CF-000002', status_pagamento: 'pending', role: 'member', asaas_id: 'cus_002', created_at: '2024-02-20' },
+        { nome: 'Ana Paula Ferreira', cpf: '345.678.901-23', telefone: '(85) 97777-0003', email: 'ana@email.com', password: '123456', numero_carteirinha: 'CF-000003', status_pagamento: 'active', role: 'member', asaas_id: 'cus_003', created_at: '2024-03-10' },
+        { nome: 'Carlos Eduardo Lima', cpf: '456.789.012-34', telefone: '(85) 96666-0004', email: 'carlos@email.com', password: '123456', numero_carteirinha: 'CF-000004', status_pagamento: 'inactive', role: 'member', asaas_id: 'cus_004', created_at: '2024-01-05' },
+      ];
+      await c.from('users').insert(initialUsers);
+      const initialAdmins = [
+        { nome: 'Administrador Femmina', email: 'admin@femmina.com', password: '123456', role: 'admin' },
+        { nome: 'Ana Atendente', email: 'atendente@femmina.com', password: '123456', role: 'admin' },
+      ];
+      await c.from('admins').insert(initialAdmins);
+    }
+  } catch (e) {
+    console.error('initDB error:', e);
   }
 }
 
@@ -3177,19 +3203,26 @@ function showToast(msg, type = 'info') {
 
 // ── BOOT ──────────────────────────────────────────────
 (async function boot() {
-  await initDB();
-  const session = sessionStorage.getItem('femmina_session');
-  if (session) {
-    try {
+  try {
+    // Wait a bit for Supabase library to be ready if needed
+    if (!window.supabase && !window.supabaseJS) {
+      await new Promise(r => setTimeout(r, 500));
+    }
+    await initDB();
+    const session = sessionStorage.getItem('femmina_session');
+    if (session) {
       const user = JSON.parse(session);
-      // Refresh user from DB
       const fresh = user.role === 'admin'
         ? (await getAdmins()).find(a => a.id === user.id)
         : (await getUsers()).find(u => u.id === user.id);
       if (fresh) { loginSuccess(fresh); return; }
-    } catch {}
+    }
+  } catch (e) {
+    console.error('Boot process failed:', e);
   }
-  document.getElementById('auth-page').style.display = 'flex';
+  // Ensure the page is visible even if DB fails
+  const authPage = document.getElementById('auth-page');
+  if (authPage) authPage.style.display = 'block'; 
 })();
 
 // ── GLOBAL SEARCH ──────────────────────────────────────
