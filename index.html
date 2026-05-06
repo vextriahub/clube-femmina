@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.0.3 - FINAL MOBILE FIX -->
+<!-- VERSION: 2.0.4 - JS & MOBILE VISIBILITY FIX -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -846,9 +846,9 @@
   /* Responsive adjustments */
   @media (max-width:960px) {
     .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; }
-    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; }
+    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 20px; }
     .home-col-right { margin-top: 40px; }
-    .auth-form-side { width: 100% !important; min-width: unset !important; }
+    .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; }
   }
   @media (max-width:480px) {
     .home-headline { font-size: 28px !important; }
@@ -2031,57 +2031,42 @@ function initSidebarParticles() {
 const SUPABASE_URL = 'https://luwgrbwfnemfpcrglcdp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1d2dyYndmbmVtZnBjcmdsY2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwODQ5NjUsImV4cCI6MjA5MzY2MDk2NX0.AMSFQ6aLozWZyZY8NOQZt3npwU1Wofc1M7UbniPZQoE';
 
-let client = null;
-function getClient() {
-  if (client) return client;
-  if (window.supabase && window.supabase.createClient) {
-    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } else if (window.supabaseJS && window.supabaseJS.createClient) {
-    client = window.supabaseJS.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-  return client;
-}
+// Resolve collision: Rename local client to supabaseClient
+const supabaseClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 // ── DATABASE (Supabase-backed) ────────────────────────
 const DB = {
   async getUsers() {
-    const c = getClient();
-    if (!c) return [];
-    const { data, error } = await c.from('users').select('*');
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient.from('users').select('*');
     if (error) { console.error('Error fetching users:', error); return []; }
     return data || [];
   },
   async getAdmins() {
-    const c = getClient();
-    if (!c) return [];
-    const { data, error } = await c.from('admins').select('*');
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient.from('admins').select('*');
     if (error) { console.error('Error fetching admins:', error); return []; }
     return data || [];
   },
   async getDependents() {
-    const c = getClient();
-    if (!c) return [];
-    const { data, error } = await c.from('dependents').select('*');
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient.from('dependents').select('*');
     if (error) { console.error('Error fetching dependents:', error); return []; }
     return data || [];
   },
   async getAppointments() {
-    const c = getClient();
-    if (!c) return [];
-    const { data, error } = await c.from('appointments').select('*');
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient.from('appointments').select('*');
     if (error) { console.error('Error fetching appointments:', error); return []; }
     return data || [];
   },
   async saveUser(user) {
-    const c = getClient();
-    if (!c) throw new Error('Supabase client not initialized');
-    const { data, error } = await c.from('users').upsert(user).select();
+    if (!supabaseClient) throw new Error('Supabase not initialized');
+    const { data, error } = await supabaseClient.from('users').upsert(user).select();
     if (error) throw error;
     return data;
   },
   async saveDependent(dep) {
-    const c = getClient();
-    if (!c) throw new Error('Supabase client not initialized');
     const { data, error } = await c.from('dependents').upsert(dep).select();
     if (error) throw error;
     return data;
