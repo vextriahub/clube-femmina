@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.0.6 - CONTENT VISIBILITY & BUTTON FIX -->
+<!-- VERSION: 2.0.7 - Z-INDEX & CONTENT FIX -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -504,7 +504,7 @@
     min-height: 100vh;
     background: linear-gradient(160deg, #010712 0%, #030D26 28%, #071B4E 60%, #0D5BAE 100%);
     display: flex; flex-direction: column;
-    position: relative; overflow: hidden;
+    position: relative; overflow-x: hidden;
   }
 
   /* Decorative circles */
@@ -525,7 +525,7 @@
   .home-scroll {
     flex:1; overflow-y:auto;
     padding: 36px 48px 48px;
-    position:relative; z-index:1;
+    position:relative; z-index:5 !important;
     scrollbar-width:thin;
     scrollbar-color:rgba(255,255,255,.12) transparent;
   }
@@ -849,8 +849,9 @@
     .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 20px !important; display: block !important; }
     .home-col-right { margin-top: 40px !important; display: block !important; }
     .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; display: flex !important; }
-    .home-scroll { display: block !important; overflow-y: auto !important; height: auto !important; min-height: 100vh !important; }
-    .hero-section, .landing-section, .footer-cta { display: block !important; visibility: visible !important; opacity: 1 !important; }
+    .home-scroll { display: block !important; overflow-y: auto !important; height: auto !important; min-height: 100vh !important; position: relative !important; z-index: 50 !important; }
+    .hero-section, .landing-section, .footer-cta { display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 60 !important; }
+    .auth-side::before, .auth-side::after { display: none !important; } /* Hide decorative circles that might cover content */
   }
   @media (max-width:480px) {
     .home-headline { font-size: 28px !important; }
