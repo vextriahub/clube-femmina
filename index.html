@@ -966,47 +966,6 @@
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script>
-// Hardened Initialization
-const SUPABASE_URL = "https://your-project.supabase.co";
-const SUPABASE_KEY = "your-anon-key";
-const supabase = typeof supabase !== 'undefined' ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-// Theme Toggle
-function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
-  localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-}
-
-// Check saved theme
-if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
-
-// ── DASHBOARD BANNER ─────────────────────
-function updateDashboardBanner() {
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
-  const user = state.currentUser;
-  const firstName = user ? user.name.split(' ')[0] : '';
-  const greetEl = document.getElementById('dashboard-greeting');
-  if (greetEl) greetEl.textContent = greeting + (firstName ? ', ' + firstName + '!' : '!');
-
-  // Banner stats
-  const members = state.members || [];
-  const activeCount = members.filter(m => m.status === 'active').length;
-  const totalCount = members.length;
-  const percentPaid = totalCount > 0 ? Math.round((activeCount / totalCount) * 100) : 0;
-  const monthlyFee = 29.90;
-  const estimatedRevenue = activeCount * monthlyFee;
-
-  const bannerReceita = document.getElementById('banner-receita');
-  const bannerSocios = document.getElementById('banner-socios');
-  const bannerEmDia = document.getElementById('banner-em-dia');
-  if (bannerReceita) bannerReceita.textContent = 'R$ ' + estimatedRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  if (bannerSocios) bannerSocios.textContent = activeCount;
-  if (bannerEmDia) bannerEmDia.textContent = percentPaid + '%';
-}
-
-</script>
 </head>
 <body>
 
