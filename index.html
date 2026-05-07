@@ -226,9 +226,12 @@
     .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 20px 0 60px rgba(0,0,0,0.3); }
     .sidebar.open { transform: translateX(0); }
     .main { margin-left: 0 !important; width: 100% !important; }
-    .mobile-menu-btn { display: flex !important; }
-    .topbar { padding: 0 16px; }
-    .page-content { padding: 20px 16px; }
+    .mobile-menu-btn { display: flex !important; color: var(--p-700) !important; }
+    .topbar { padding: 0 16px; justify-content: space-between; }
+    .topbar-title { font-size: 16px !important; }
+    .global-search { position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); padding: 8px 16px; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); z-index: 40; width: 100% !important; margin: 0 !important; }
+    .global-search input { width: 100% !important; }
+    .page-content { padding: 16px; }
   }
 
   .sidebar-overlay {
@@ -849,13 +852,15 @@
     
     .home-header-nav { 
       position: fixed; top: 0; left: 0; right: 0; 
-      background: rgba(255, 255, 255, 0.85); 
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      padding: 12px 20px; z-index: 2000; 
+      background: rgba(255, 255, 255, 0.9); 
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      padding: 12px 16px; z-index: 2000; 
       border-bottom: 1px solid var(--border); 
       display: flex !important; align-items: center !important; justify-content: space-between !important;
-      height: 68px;
+      height: 64px;
     }
+    .dashboard-banner { padding: 24px 20px !important; margin-top: 10px !important; }
+    .revenue-mini { margin-top: 10px !important; flex-direction: column !important; gap: 12px !important; }
     .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; }
     .home-headline { font-size: 32px !important; line-height: 1.15 !important; margin-bottom: 20px !important; }
     .home-tagline { font-size: 15px !important; max-width: none !important; margin-bottom: 32px !important; }
