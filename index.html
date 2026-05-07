@@ -3277,10 +3277,11 @@ function showToast(msg, type = 'info') {
       const fresh = user.role === 'admin'
         ? (await getAdmins()).find(a => a.id === user.id)
         : (await getUsers()).find(u => u.id === user.id);
-    if (fresh) { 
-      document.body.classList.add('logged-in');
-      loginSuccess(fresh); 
-      return; 
+      if (fresh) { 
+        document.body.classList.add('logged-in');
+        loginSuccess(fresh); 
+        return; 
+      }
     }
   } catch (e) {
     console.error('Boot process failed:', e);
