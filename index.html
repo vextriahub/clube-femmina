@@ -62,24 +62,33 @@
     --r-50:rgba(239,68,68,0.15); --r-600:#EF4444;
   }
   
-  body { 
-    background: var(--bg) !important; 
-    color: var(--tx1); 
-    font-family: 'DM Sans', sans-serif;
-    line-height: 1.5;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+  body, html {
     margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    overflow: hidden !important; /* Locks body scroll completely */
+    background: var(--bg) !important;
+    color: var(--tx1);
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Robust state management - Mutually Exclusive */
-  #main-app { display: none !important; }
-  #auth-page { display: block !important; }
+  /* Full-Screen Page Containers (Mutually Exclusive) */
+  #auth-page, #main-app {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    overflow-y: auto; /* Internal scroll only */
+    overflow-x: hidden;
+    display: none !important;
+    z-index: 1;
+  }
 
-  body.logged-in #main-app { display: flex !important; }
+  /* Logic: Only one is EVER shown */
+  body:not(.logged-in) #auth-page { display: block !important; z-index: 10; }
+  body.logged-in #main-app { display: flex !important; z-index: 20; }
   body.logged-in #auth-page { display: none !important; }
 
-  /* Enforce Topbar visibility */
+  /* Dashboard Topbar Leak Prevention */
   .topbar { display: none !important; }
   body.logged-in .topbar { display: flex !important; }
 
@@ -93,9 +102,19 @@
   body.dark-theme .home-price-num, body.dark-theme .home-price-cents { color: #fff; }
   body.dark-theme .home-headline span { background: linear-gradient(90deg,#29B6F6,#7DD3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-  /* Scrolling consistency */
-  .home-scroll { width: 100%; overflow-x: hidden; }
-  .main { flex: 1; min-width: 0; background: var(--bg); }
+  /* Theme overrides */
+  body.dark-theme .auth-side { background: linear-gradient(160deg, #010712 0%, #030D26 28%, #071B4E 60%, #0D5BAE 100%); }
+  body.dark-theme .home-header-nav { background: rgba(1, 7, 18, 0.85); }
+  body.dark-theme .home-price-main { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); }
+  body.dark-theme .benefit-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+  body.dark-theme .home-stat { background: rgba(255,255,255,0.04); }
+  body.dark-theme .footer-cta { background: linear-gradient(135deg, rgba(13,91,174,0.3), rgba(41,182,246,0.1)); }
+  body.dark-theme .home-price-num, body.dark-theme .home-price-cents { color: #fff; }
+  body.dark-theme .home-headline span { background: linear-gradient(90deg,#29B6F6,#7DD3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+  /* Ensure internal containers fill their parent */
+  .home-scroll { width: 100%; height: 100%; overflow-y: auto; }
+  .main { flex: 1; min-width: 0; background: var(--bg); height: 100%; overflow-y: auto; }
   * { box-sizing: border-box; }
   .font-display { font-family: 'Playfair Display', serif; }
   .text-xs { font-size: 12px; }
