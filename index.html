@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.1.3 - LIGHT THEME & DB STABILIZATION -->
+<!-- VERSION: 2.2.0 - THEME SWITCHER & LOGIN HARDENING -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -13,43 +13,31 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    /* === LIGHT THEME PALETTE === */
+    /* === THEME VARIABLES (Default Light) === */
     --p-50:#F8FAFF; --p-100:#E0E7FF; --p-200:#C7D2FE; --p-400:#818CF8;
     --p-500:#1A6EC8; --p-600:#0D5BAE; --p-700:#094A94; --p-800:#063880;
     --p-900:#0F172A; --p-950:#020617;
-
-    /* === ACCENT === */
     --accent:#29B6F6; --accent-dk:#0288D1;
     --white:#FFFFFF; --bg:#FFFFFF; --surface:#F8FAFF; --surface2:#F1F5F9;
-    
-    /* === STATUS === */
-    --green-50:#ECFDF5; --green-600:#059669;
-    --amber-50:#FFFBEB; --amber-600:#D97706;
-    --blue-50:#EFF6FF; --blue-600:#2563EB;
-    --r-50:#FEF2F2; --r-600:#DC2626;
-
-    /* === TEXT === */
     --tx1:#0F172A; --tx2:#475569; --tx3:#64748B; --tx4:#94A3B8;
     --border:#E2E8F0; --r-lg:16px; --r-md:12px; --shadow:0 10px 15px -3px rgba(0,0,0,0.1);
-
-    /* === SIDEBAR === */
-    --sb:#040F2D;--sb2:#0A2463;--sb3:#0D3380;
-
-    /* === ANIMATION === */
-    --ease:0.22s cubic-bezier(0.4,0,0.2,1);
-
-    --anim-stagger: stagger-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
 
-  @keyframes stagger-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  body.dark-theme {
+    --bg:#010712; --surface:#030D26; --surface2:#071B4E;
+    --tx1:#FFFFFF; --tx2:rgba(255,255,255,0.8); --tx3:rgba(255,255,255,0.5); --tx4:rgba(255,255,255,0.3);
+    --border:rgba(255,255,255,0.1); --shadow:0 20px 40px rgba(0,0,0,0.4);
+    --white: #030D26;
   }
-
-  .stagger-item {
-    opacity: 0;
-    animation: var(--anim-stagger);
-  }
+  
+  body.dark-theme .auth-side { background: linear-gradient(160deg, #010712 0%, #030D26 28%, #071B4E 60%, #0D5BAE 100%); }
+  body.dark-theme .home-header-nav { background: rgba(1, 7, 18, 0.85); }
+  body.dark-theme .home-price-main { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); }
+  body.dark-theme .benefit-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+  body.dark-theme .home-stat { background: rgba(255,255,255,0.04); }
+  body.dark-theme .footer-cta { background: linear-gradient(135deg, rgba(13,91,174,0.3), rgba(41,182,246,0.1)); }
+  body.dark-theme .home-price-num, body.dark-theme .home-price-cents { color: #fff; }
+  body.dark-theme .home-headline span { background: linear-gradient(90deg,#29B6F6,#7DD3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
     /* === ALIASES for legacy CSS === */
     /* Tailwind-style aliases used in inherited CSS */
@@ -83,7 +71,8 @@
     max-width: 100% !important;
     min-height: 100vh;
     overflow-x: hidden !important; 
-    background: #FFFFFF;
+    background: var(--bg);
+    color: var(--tx1);
     -webkit-font-smoothing: antialiased;
   }
   * { box-sizing: border-box; }
@@ -230,7 +219,7 @@
 
   /* ===== CARDS ===== */
   .card {
-    background: #fff;
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--r-lg);
     box-shadow: var(--shadow);
@@ -254,7 +243,7 @@
   }
 
   .stat-card {
-    background: #fff;
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 20px 22px;
@@ -308,7 +297,7 @@
   .btn-primary { background: linear-gradient(135deg,var(--p-600),var(--p-700)); color: #fff; border-color: transparent; border-radius: 50px; box-shadow: 0 4px 14px rgba(13,91,174,0.3); }
   .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg,var(--p-700),var(--p-800)); box-shadow: 0 6px 20px rgba(9,74,148,0.4); transform: translateY(-1px); }
 
-  .btn-outline { background: #fff; color: var(--p-600); border-color: var(--border); border-radius: 50px; }
+  .btn-outline { background: var(--bg); color: var(--p-600); border-color: var(--border); border-radius: 50px; }
   .btn-outline:hover:not(:disabled) { background: var(--blue-50); border-color: var(--p-600); color: var(--p-600); }
 
   .btn-ghost { background: transparent; color: var(--tx3); border-color: transparent; }
@@ -334,7 +323,7 @@
     border-radius: var(--radius-sm);
     font-size: 14px; font-family: inherit;
     color: var(--tx1);
-    background: #fff;
+    background: var(--bg);
     transition: all var(--transition);
     outline: none;
     appearance: none;
@@ -423,12 +412,12 @@
 
   /* QR CODE MODAL EXTRAS */
   .qr-expanded-container {
-    background: #fff; padding: 32px; border-radius: 24px;
+    background: var(--bg); padding: 32px; border-radius: 24px;
     display: flex; flex-direction: column; align-items: center; gap: 20px;
     box-shadow: var(--shadow);
   }
   .qr-canvas-mini {
-    background: #fff; padding: 8px; border-radius: 12px;
+    background: var(--bg); padding: 8px; border-radius: 12px;
     cursor: zoom-in; transition: transform 0.2s;
   }
   .qr-canvas-mini:hover { transform: scale(1.05); }
@@ -473,14 +462,14 @@
 
 
   /* ===== AUTH PAGE LAYOUT ===== */
-  .auth-page { min-height:100vh; display:block; background:#F8FAFF; }
+  .auth-page { min-height:100vh; display:block; background:var(--bg); }
 
   /* ──────────────── LEFT / HOME PANEL ──────────────── */
   .auth-side {
     width: 100% !important;
     max-width: 100vw !important;
     min-height: 100vh;
-    background: #FFFFFF;
+    background: var(--bg);
     display: flex; flex-direction: column;
     position: relative; overflow-x: hidden;
   }
@@ -593,7 +582,7 @@
     gap: 32px;
   }
   .benefit-card {
-    background: #fff;
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 32px;
@@ -636,13 +625,13 @@
   }
   .step-number {
     width: 64px; height: 64px;
-    background: #fff;
+    background: var(--bg);
     border: 2px solid var(--p-600);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 24px; font-weight: bold; color: var(--p-600);
     margin: 0 auto 24px;
-    box-shadow: 0 0 0 8px #fff;
+    box-shadow: 0 0 0 8px var(--bg);
   }
   .step-title { font-size: 18px; font-weight: 600; color: var(--tx1); margin-bottom: 12px; }
   .step-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; padding: 0 16px; }
@@ -704,7 +693,7 @@
 
   /* Price Hero */
   .home-price-hero {
-    background: #fff;
+    background: var(--bg);
     border:1px solid var(--border);
     border-radius:16px; padding:22px 24px;
     margin-bottom:16px;
@@ -796,7 +785,7 @@
     border:1px solid var(--border);
   }
   .home-stat {
-    background: #fff;
+    background: var(--bg);
     padding:14px 10px; text-align:center;
   }
   .home-stat-num { font-size:18px; font-weight:700; color:var(--tx1); line-height:1; }
@@ -807,7 +796,7 @@
     width:440px; min-width:440px; max-width:100%;
     display:flex; align-items:center; justify-content:center;
     padding:48px 40px;
-    background: #fff;
+    background: var(--bg);
     box-shadow:-6px 0 40px rgba(0,0,0,.05);
     position:relative;
   }
@@ -853,7 +842,7 @@
     transition:all 0.2s ease; z-index:1;
   }
   .auth-tabs button.active {
-    color:var(--p-600); background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    color:var(--p-600); background:var(--bg); box-shadow:0 2px 8px rgba(0,0,0,0.06);
   }
 
   /* Modern Inputs */
@@ -866,7 +855,7 @@
   }
   .auth-input {
     width:100%; padding:14px 16px 14px 44px;
-    background:#fff; border:1px solid var(--border); border-radius:12px;
+    background:var(--bg); border:1px solid var(--border); border-radius:12px;
     font-size:14px; color:var(--tx1); transition:all 0.2s ease;
     font-family:inherit; outline:none;
   }
@@ -904,7 +893,7 @@
     padding: 20px;
   }
   .auth-modal-content {
-    background:#fff; 
+    background:var(--bg); 
     width: 100%;
     max-width: 440px; 
     margin: auto;
@@ -951,7 +940,7 @@
   /* Secondary Button */
   .auth-btn-outline {
     width:100%; padding:15px; border-radius:12px;
-    background:#fff; border:1px solid var(--border);
+    background:var(--bg); border:1px solid var(--border);
     color:var(--tx1); font-size:14px; font-weight:600;
     cursor:pointer; transition:all 0.2s ease;
   }
@@ -972,6 +961,20 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
+// Hardened Initialization
+const SUPABASE_URL = "https://your-project.supabase.co";
+const SUPABASE_KEY = "your-anon-key";
+const supabase = typeof supabase !== 'undefined' ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+// Theme Toggle
+function toggleTheme() {
+  document.body.classList.toggle('dark-theme');
+  localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+}
+
+// Check saved theme
+if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
+
 // ── DASHBOARD BANNER ─────────────────────
 function updateDashboardBanner() {
   const hour = new Date().getHours();
@@ -1070,7 +1073,10 @@ function updateDashboardBanner() {
             <div class="home-logo-sub">Benefício Popular</div>
           </div>
         </div>
-        <button class="btn btn-primary btn-access-account" onclick="document.getElementById('auth-modal').style.display='flex'">Acessar minha conta</button>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="btn btn-ghost btn-icon" onclick="toggleTheme()" title="Alternar Tema" style="font-size:20px;">💡</button>
+          <button class="btn btn-primary btn-access-account" onclick="document.getElementById('auth-modal').style.display='flex'">Acessar minha conta</button>
+        </div>
       </div>
 
 
@@ -1980,59 +1986,66 @@ function initSidebarParticles() {
 const SUPABASE_URL = 'https://luwgrbwfnemfpcrglcdp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1d2dyYndmbmVtZnBjcmdsY2RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwODQ5NjUsImV4cCI6MjA5MzY2MDk2NX0.AMSFQ6aLozWZyZY8NOQZt3npwU1Wofc1M7UbniPZQoE';
 
-// Resolve collision: Rename local client to supabaseClient
-const supabaseClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+function getSupabaseClient() {
+  if (window.supabaseClientInstance) return window.supabaseClientInstance;
+  if (window.supabase && window.supabase.createClient) {
+    window.supabaseClientInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return window.supabaseClientInstance;
+  }
+  return null;
+}
 
 // ── DATABASE (Supabase-backed) ────────────────────────
 const DB = {
   async getUsers() {
-    if (!supabaseClient) return [];
-    const { data, error } = await supabaseClient.from('users').select('*');
+    const c = getSupabaseClient(); if (!c) return [];
+    const { data, error } = await c.from('users').select('*');
     if (error) { console.error('Error fetching users:', error); return []; }
     return data || [];
   },
   async getAdmins() {
-    if (!supabaseClient) return [];
-    const { data, error } = await supabaseClient.from('admins').select('*');
+    const c = getSupabaseClient(); if (!c) return [];
+    const { data, error } = await c.from('admins').select('*');
     if (error) { console.error('Error fetching admins:', error); return []; }
     return data || [];
   },
   async getDependents() {
-    if (!supabaseClient) return [];
-    const { data, error } = await supabaseClient.from('dependents').select('*');
+    const c = getSupabaseClient(); if (!c) return [];
+    const { data, error } = await c.from('dependents').select('*');
     if (error) { console.error('Error fetching dependents:', error); return []; }
     return data || [];
   },
   async getAppointments() {
-    if (!supabaseClient) return [];
-    const { data, error } = await supabaseClient.from('appointments').select('*');
+    const c = getSupabaseClient(); if (!c) return [];
+    const { data, error } = await c.from('appointments').select('*');
     if (error) { console.error('Error fetching appointments:', error); return []; }
     return data || [];
   },
   async saveUser(user) {
-    if (!supabaseClient) throw new Error('Supabase not initialized');
-    const { data, error } = await supabaseClient.from('users').upsert(user).select();
+    const c = getSupabaseClient(); if (!c) throw new Error('Supabase not initialized');
+    const { data, error } = await c.from('users').upsert(user).select();
     if (error) throw error;
     return data;
   },
   async saveDependent(dep) {
-    if (!supabaseClient) throw new Error('Supabase not initialized');
-    const { data, error } = await supabaseClient.from('dependents').upsert(dep).select();
+    const c = getSupabaseClient(); if (!c) throw new Error('Supabase not initialized');
+    const { data, error } = await c.from('dependents').upsert(dep).select();
     if (error) throw error;
     return data;
   },
   async saveAppointment(appt) {
-    if (!supabaseClient) throw new Error('Supabase not initialized');
-    const { data, error } = await supabaseClient.from('appointments').upsert(appt).select();
+    const c = getSupabaseClient(); if (!c) throw new Error('Supabase not initialized');
+    const { data, error } = await c.from('appointments').upsert(appt).select();
     if (error) throw error;
     return data;
   }
 };
 
 async function initDB() {
-  if (!supabaseClient) { console.warn('Supabase not ready for initDB'); return; }
+  const c = getSupabaseClient();
+  if (!c) { console.warn('Supabase not ready for initDB'); return; }
   try {
-    const { count, error } = await supabaseClient.from('users').select('*', { count: 'exact', head: true });
+    const { count, error } = await c.from('users').select('*', { count: 'exact', head: true });
     if (count === 0 && !error) {
       console.log('Seeding Supabase with initial data...');
       const initialUsers = [
@@ -2041,17 +2054,30 @@ async function initDB() {
         { nome: 'Ana Paula Ferreira', cpf: '345.678.901-23', telefone: '(85) 97777-0003', email: 'ana@email.com', password: '123456', numero_carteirinha: 'CF-000003', status_pagamento: 'active', role: 'member', asaas_id: 'cus_003', created_at: '2024-03-10' },
         { nome: 'Carlos Eduardo Lima', cpf: '456.789.012-34', telefone: '(85) 96666-0004', email: 'carlos@email.com', password: '123456', numero_carteirinha: 'CF-000004', status_pagamento: 'inactive', role: 'member', asaas_id: 'cus_004', created_at: '2024-01-05' },
       ];
-      await supabaseClient.from('users').insert(initialUsers);
+      await c.from('users').insert(initialUsers);
       const initialAdmins = [
         { nome: 'Administrador Femmina', email: 'admin@femmina.com', password: '123456', role: 'admin' },
         { nome: 'Ana Atendente', email: 'atendente@femmina.com', password: '123456', role: 'admin' },
       ];
-      await supabaseClient.from('admins').insert(initialAdmins);
+      await c.from('admins').insert(initialAdmins);
     }
   } catch (e) {
     console.error('initDB error:', e);
   }
 }
+
+// ── THEME SWITCHER ─────────────────────────────────────
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-theme');
+  localStorage.setItem('femmina_theme', isDark ? 'dark' : 'light');
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('femmina_theme');
+  if (saved === 'dark') document.body.classList.add('dark-theme');
+}
+
+initTheme();
 
 // Helper functions now use DB object
 async function getUsers() { return await DB.getUsers(); }
