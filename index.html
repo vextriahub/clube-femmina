@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 3.1.0 - ULTIMATE ISOLATION -->
+<!-- VERSION: 4.0.0 - PREMIUM RESET -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -64,7 +64,7 @@
   
   html {
     overflow: hidden !important;
-    height: 100%;
+    height: 100%; width: 100%;
   }
   body {
     margin: 0; padding: 0;
@@ -76,7 +76,6 @@
     -webkit-font-smoothing: antialiased;
     position: fixed;
     top: 0; left: 0;
-    scrollbar-gutter: stable; /* Prevents layout shift */
   }
 
   /* Structural Containers - Bulletproof Isolation */
@@ -790,35 +789,29 @@
   }
   .home-tagline { font-size:16px; color:var(--tx2); line-height:1.65; margin-bottom:28px; max-width:420px; }
 
-  /* Price Hero Refined */
+  /* Price Hero - Premium Upgrade */
   .home-price-hero {
-    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
-    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(13, 91, 174, 0.1) 0%, rgba(41, 182, 246, 0.05) 100%);
+    border: 2px solid var(--p-500);
     border-radius: 24px; padding: 32px;
     margin-bottom: 24px;
     display: flex; align-items: center; gap: 32px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 20px 50px rgba(13, 91, 174, 0.1);
     position: relative; overflow: hidden;
   }
   body.dark-theme .home-price-hero {
-    background: rgba(30, 41, 59, 0.5);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border-color: rgba(255,255,255,0.1);
-  }
-  .home-price-hero::before {
-    content: ''; position: absolute; top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: radial-gradient(circle at center, var(--p-500) 0%, transparent 60%);
-    opacity: 0.03; pointer-events: none;
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    border-color: var(--p-400);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   }
   .home-price-main { flex: 1; }
-  .home-price-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--p-400); margin-bottom: 8px; font-weight: 700; }
-  .home-price-value { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
-  .home-price-cur { font-size: 22px; font-weight: 800; color: var(--p-500); }
-  .home-price-num { font-family: 'DM Sans', sans-serif; font-size: 64px; font-weight: 800; color: var(--tx1); line-height: 1; letter-spacing: -0.03em; }
-  .home-price-cents { font-family: 'DM Sans', sans-serif; font-size: 32px; font-weight: 700; color: var(--tx1); opacity: 0.9; }
-  .home-price-period { font-size: 16px; color: var(--tx3); margin-left: 6px; font-weight: 500; }
-  .home-price-note { font-size: 12px; color: var(--tx3); opacity: 0.9; }
+  .home-price-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--p-400); margin-bottom: 10px; font-weight: 800; }
+  .home-price-value { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+  .home-price-cur { font-size: 24px; font-weight: 800; color: var(--p-400); }
+  .home-price-num { font-family: 'DM Sans', sans-serif; font-size: 72px; font-weight: 900; color: #fff; line-height: 0.9; letter-spacing: -0.04em; text-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .home-price-cents { font-family: 'DM Sans', sans-serif; font-size: 36px; font-weight: 800; color: #fff; opacity: 0.9; }
+  .home-price-period { font-size: 18px; color: var(--tx3); margin-left: 8px; font-weight: 600; }
+  .home-price-note { font-size: 13px; color: var(--tx3); font-weight: 500; }
 
   .home-price-badge {
     background: linear-gradient(135deg, #10B981 0%, #059669 100%);
