@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.0.8 - PUBLIC REPO DEPLOY -->
+<!-- VERSION: 2.0.9 - MOBILE UI POLISH -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -530,13 +530,16 @@
     scrollbar-color:rgba(255,255,255,.12) transparent;
   }
   @media (max-width: 640px) {
-    .home-scroll { padding: 80px 20px 40px !important; display: block !important; height: auto !important; min-height: 100vh !important; }
-    .hero-section { min-height: auto !important; padding-top: 20px !important; display: block !important; visibility: visible !important; }
-    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 12px 20px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
+    .home-scroll { padding: 90px 20px 60px !important; display: block !important; height: auto !important; min-height: 100vh !important; }
+    .hero-section { min-height: auto !important; padding-top: 10px !important; display: block !important; visibility: visible !important; }
+    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: #010712; padding: 14px 20px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
     .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; display: block !important; }
-    .home-headline { font-size: 32px !important; line-height: 1.2 !important; }
-    .home-price-hero { flex-direction: column; gap: 20px; text-align: center; }
+    .home-headline { font-size: 30px !important; line-height: 1.2 !important; margin-bottom: 20px !important; }
+    .home-price-hero { flex-direction: column; gap: 24px; text-align: center; margin-bottom: 32px !important; }
     .home-price-badge { margin: 0 auto; }
+    .consult-row { flex-wrap: wrap !important; padding: 12px !important; }
+    .consult-name { min-width: 100% !important; margin-bottom: 8px !important; font-size: 14px !important; }
+    .consult-prices { width: 100% !important; justify-content: flex-end !important; }
   }
   .home-header-nav {
     position: absolute; top: 36px; left: 48px; right: 48px; z-index: 10;
@@ -854,8 +857,10 @@
     .auth-side::before, .auth-side::after { display: none !important; } /* Hide decorative circles that might cover content */
   }
   @media (max-width:480px) {
-    .home-headline { font-size: 28px !important; }
-    .home-scroll { padding: 0 16px 40px !important; }
+    .home-headline { font-size: 26px !important; letter-spacing: -0.02em !important; }
+    .home-scroll { padding: 90px 16px 60px !important; }
+    .section-title { font-size: 28px !important; }
+    .home-price-num { font-size: 48px !important; }
   }
 
 
