@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION: 2.2.1 - STATUS COLORS FIX -->
+<!-- VERSION: 2.3.0 - PLATFORM STABILIZATION -->
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -206,8 +206,9 @@
   /* ===== MAIN CONTENT ===== */
   .main {
     flex: 1;
-    margin-left: var(--sidebar-w);
-    display: flex; flex-direction: column; min-height: 100vh;
+    display: flex; flex-direction: column;
+    min-width: 0;
+    background: var(--bg);
   }
 
   .topbar {
@@ -215,9 +216,27 @@
     background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center;
-    padding: 0 28px; gap: 16px;
+    padding: 0 24px; gap: 12px;
     position: sticky; top: 0; z-index: 50;
   }
+
+  .mobile-menu-btn { display: none; }
+
+  @media (max-width: 960px) {
+    .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 20px 0 60px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0 !important; width: 100% !important; }
+    .mobile-menu-btn { display: flex !important; }
+    .topbar { padding: 0 16px; }
+    .page-content { padding: 20px 16px; }
+  }
+
+  .sidebar-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15,23,42,0.4); backdrop-filter: blur(4px);
+    z-index: 90; transition: opacity 0.3s ease;
+  }
+  .sidebar-overlay.hidden { opacity: 0; pointer-events: none; }
 
   .topbar-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 500; color: var(--tx1); flex: 1; }
 
@@ -505,9 +524,10 @@
   @media (max-width: 640px) {
     .home-scroll { padding: 100px 20px 60px !important; display: block !important; height: auto !important; min-height: 100vh !important; }
     .hero-section { min-height: auto !important; padding-top: 10px !important; display: block !important; visibility: visible !important; }
-    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 10px 16px; z-index: 1000; border-bottom: 1px solid var(--border); display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; height: 64px; }
-    .home-logo-name { font-size: 16px !important; color: var(--p-700) !important; }
-    .home-logo-sub { font-size: 8px !important; color: var(--tx3) !important; }
+    .home-header-nav { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); padding: 8px 16px; z-index: 1000; border-bottom: 1px solid var(--border); display: flex !important; align-items: center !important; justify-content: space-between !important; height: auto !important; min-height: 64px; }
+    .home-logo-name { font-size: 15px !important; color: var(--p-700) !important; }
+    .home-logo-sub { display: none; }
+    .btn-access-account { padding: 8px 14px !important; font-size: 11px !important; }
     .btn-access-account { padding: 6px 14px !important; font-size: 11px !important; display: block !important; white-space: nowrap !important; }
     .home-headline { font-size: 28px !important; line-height: 1.2 !important; margin-bottom: 16px !important; }
     .home-price-hero { flex-direction: column; gap: 20px; text-align: center; margin-bottom: 24px !important; }
@@ -817,21 +837,42 @@
   #login-tabs { margin-bottom:24px; }
   #login-tabs .tab { font-size:14px; padding:8px 20px; }
 
-  /* Responsive adjustments - FORCED VISIBILITY */
+  /* Responsive refinements */
   @media (max-width:960px) {
-    .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; overflow-y: visible !important; }
-    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 20px !important; display: block !important; }
-    .home-col-right { margin-top: 40px !important; display: block !important; }
-    .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; display: flex !important; }
-    .home-scroll { display: block !important; overflow-y: auto !important; height: auto !important; min-height: 100vh !important; position: relative !important; z-index: 50 !important; }
-    .hero-section, .landing-section, .footer-cta { display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 60 !important; }
+    .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; overflow-x: hidden !important; }
+    .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 !important; display: block !important; }
+    .home-col-right { margin-top: 40px !important; display: block !important; width: 100% !important; }
+    .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; display: flex !important; padding: 40px 20px !important; }
+    .home-scroll { display: block !important; overflow-y: auto !important; overflow-x: hidden !important; height: auto !important; min-height: 100vh !important; position: relative !important; z-index: 50 !important; padding: 80px 20px 40px !important; }
+    .hero-section, .landing-section, .footer-cta { display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 60 !important; width: 100% !important; overflow-x: hidden !important; }
     .auth-side::before, .auth-side::after { display: none !important; }
+    
+    .home-header-nav { 
+      position: fixed; top: 0; left: 0; right: 0; 
+      background: rgba(255, 255, 255, 0.85); 
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      padding: 12px 20px; z-index: 2000; 
+      border-bottom: 1px solid var(--border); 
+      display: flex !important; align-items: center !important; justify-content: space-between !important;
+      height: 68px;
+    }
+    .btn-access-account { padding: 8px 16px !important; font-size: 12px !important; }
+    .home-headline { font-size: 32px !important; line-height: 1.15 !important; margin-bottom: 20px !important; }
+    .home-tagline { font-size: 15px !important; max-width: none !important; margin-bottom: 32px !important; }
+    
+    .home-price-hero { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; padding: 24px !important; text-align: center; }
+    .home-price-badge { align-self: center !important; }
+    
+    .home-stats { grid-template-columns: 1fr 1fr 1fr !important; }
+    .consult-row { flex-direction: column !important; align-items: flex-start !important; padding: 12px !important; gap: 4px !important; }
+    .consult-prices { width: 100% !important; justify-content: space-between !important; margin-top: 4px; }
   }
+
   @media (max-width:480px) {
-    .home-headline { font-size: 26px !important; letter-spacing: -0.02em !important; }
-    .home-scroll { padding: 90px 16px 60px !important; }
-    .section-title { font-size: 28px !important; }
-    .home-price-num { font-size: 48px !important; }
+    .home-headline { font-size: 28px !important; }
+    .section-title { font-size: 24px !important; }
+    .stat-card { padding: 16px !important; }
+    .stat-value { font-size: 22px !important; }
   }
 
 
@@ -1082,6 +1123,8 @@
       <!-- ── CONSULT TABLE ── -->
       <div class="home-section-title">Consultas com desconto de 40%</div>
       <div class="consult-table">
+        <div class="consult-row">
+          <div class="consult-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg></div>
           <span class="consult-name">Cardiologista</span>
           <div class="consult-prices">
             <span class="consult-original">R$ 200</span>
@@ -1245,10 +1288,9 @@
 </div>
 
 <!-- MAIN APP -->
-<div id="main-app" style="display:none">
-  <div id="app">
+  <div id="main-app" class="app-container" style="display:none">
     <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-bg-effect" id="sidebar-particles"></div>
       <div class="sidebar-logo">
         <div class="logo-mark">
@@ -2151,6 +2193,7 @@ function loginSuccess(user) {
   currentUser = user;
   sessionStorage.setItem('femmina_session', JSON.stringify(user));
   document.getElementById('auth-page').style.display = 'none';
+  document.getElementById('auth-modal').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
   initApp();
 }
