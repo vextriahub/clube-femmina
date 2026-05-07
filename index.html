@@ -226,12 +226,28 @@
     .sidebar { transform: translateX(-100%); width: 280px; box-shadow: 20px 0 60px rgba(0,0,0,0.3); }
     .sidebar.open { transform: translateX(0); }
     .main { margin-left: 0 !important; width: 100% !important; }
-    .mobile-menu-btn { display: flex !important; color: var(--p-700) !important; }
-    .topbar { padding: 0 16px; justify-content: space-between; }
-    .topbar-title { font-size: 16px !important; }
-    .global-search { position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); padding: 8px 16px; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); z-index: 40; width: 100% !important; margin: 0 !important; }
-    .global-search input { width: 100% !important; }
-    .page-content { padding: 16px; }
+    .mobile-menu-btn { display: flex !important; color: var(--p-600) !important; font-size: 24px !important; }
+    .topbar { padding: 0 16px; justify-content: space-between; gap: 12px; }
+    .topbar-title { font-size: 16px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .global-search { 
+      position: absolute; top: 64px; left: 0; right: 0; 
+      background: var(--bg); padding: 10px 16px; 
+      border-bottom: 1px solid var(--border); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+      z-index: 40; width: 100% !important; margin: 0 !important;
+      display: flex !important; align-items: center; gap: 10px;
+    }
+    .global-search svg { width: 18px; height: 18px; fill: var(--tx3); flex-shrink: 0; }
+    .global-search input { 
+      width: 100% !important; border: none !important; background: none !important; 
+      padding: 0 !important; font-size: 14px !important; 
+    }
+    
+    .page-content { padding: 16px 12px 80px; }
+    .stats-grid { grid-template-columns: 1fr !important; gap: 12px; }
+    .card { margin-left: 0; margin-right: 0; border-radius: 12px; }
+    .sidebar-close-btn { display: block !important; }
   }
 
   .sidebar-overlay {
@@ -478,6 +494,34 @@
   }
   .notif-content { flex: 1; }
   .notif-text { font-size: 13px; color: var(--tx2); line-height: 1.4; margin-bottom: 4px; }
+  
+  /* ===== DASHBOARD BANNER ===== */
+  .dashboard-banner {
+    background: linear-gradient(135deg, #001A3A 0%, #003B73 100%);
+    border-radius: 20px; padding: 32px; color: #fff;
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,27,58,0.2);
+  }
+  .dashboard-banner::before {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .dashboard-banner-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .dashboard-banner-sub { font-size: 14px; opacity: 0.8; margin-bottom: 24px; }
+  .dashboard-banner-stats { display: flex; gap: 32px; align-items: center; }
+  .db-stat-num { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+  .db-stat-label { font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .global-search {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface2); border-radius: 50px;
+    padding: 8px 16px; width: 300px; transition: all 0.3s;
+    border: 1px solid var(--border);
+  }
+  .global-search:focus-within { width: 400px; border-color: var(--p-500); background: var(--bg); box-shadow: var(--shadow-sm); }
+  .global-search svg { width: 16px; height: 16px; fill: var(--tx3); }
+  .global-search input { border: none; background: transparent; outline: none; font-size: 14px; color: var(--tx1); width: 100%; }
   .notif-time { font-size: 11px; color: var(--tx3); }
   .notif-empty { padding: 40px 20px; text-align: center; color: var(--tx3); font-size: 13px; }
   .notif-badge {
@@ -1303,6 +1347,7 @@
         </div>
         <div class="logo-name">Clube Femmina</div>
         <div class="logo-sub">Benefício Popular</div>
+        <button class="sidebar-close-btn" onclick="closeSidebar()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:rgba(255,255,255,0.6); font-size:24px; cursor:pointer; display:none;">✕</button>
       </div>
 
       <nav class="sidebar-nav" id="sidebar-nav">
