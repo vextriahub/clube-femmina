@@ -100,6 +100,7 @@ body {
 /* Theme overrides */
 body.dark-theme .auth-side { background: linear-gradient(160deg, #010712 0%, #030D26 28%, #071B4E 60%, #0D5BAE 100%); }
 body.dark-theme .home-header-nav { background: rgba(1, 7, 18, 0.85); }
+body.dark-theme .home-logo-name { background: none !important; -webkit-background-clip: unset !important; background-clip: unset !important; -webkit-text-fill-color: #7DD3FC !important; color: #7DD3FC !important; }
 body.dark-theme .home-price-main { background: transparent; border-color: rgba(255,255,255,0.1); }
 body.dark-theme .benefit-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
 body.dark-theme .home-stat { background: rgba(255,255,255,0.04); }
