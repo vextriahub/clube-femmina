@@ -105,7 +105,7 @@ body.dark-theme .benefit-card { background: rgba(255,255,255,0.03); border-color
 body.dark-theme .home-stat { background: rgba(255,255,255,0.04); }
 body.dark-theme .footer-cta { background: linear-gradient(135deg, rgba(13,91,174,0.3), rgba(41,182,246,0.1)); }
 body.dark-theme .home-price-num, body.dark-theme .home-price-cents { color: #fff; }
-body.dark-theme .home-headline span { background: linear-gradient(90deg,#29B6F6,#7DD3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; padding-bottom:4px; display:inline-block; }
+body.dark-theme .home-headline span { color: #29B6F6; background: none; -webkit-text-fill-color: #29B6F6; }
 
 .home-scroll { width: 100%; height: auto; overflow: visible; }
 * { box-sizing: border-box; }
@@ -573,7 +573,7 @@ tr:hover td { background: var(--surface2); }
   min-height: 100vh;
   background: var(--bg);
   display: flex; flex-direction: column;
-  position: relative; overflow-x: clip;
+  position: relative; overflow: clip;
 }
 
 .auth-side::before {
@@ -1095,7 +1095,7 @@ body.dark-theme .home-price-cents { color: #fff; }
 #login-tabs .tab { font-size:14px; padding:8px 20px; }
 
 @media (max-width:960px) {
-  .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; overflow-x: hidden !important; }
+  .auth-side { display:block !important; visibility: visible !important; width: 100% !important; min-height: 100vh !important; opacity: 1 !important; overflow: clip !important; }
   .home-layout-grid { grid-template-columns: 1fr !important; gap: 40px; width: 100% !important; padding: 0 !important; display: block !important; }
   .home-col-right { margin-top: 40px !important; display: block !important; width: 100% !important; }
   .auth-form-side { width: 100% !important; min-width: unset !important; box-shadow: none; display: flex !important; padding: 40px 20px !important; }
