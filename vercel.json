@@ -24,6 +24,30 @@
       "dest": "/api.js"
     },
     {
+      "src": "/core\\.js",
+      "dest": "/core.js"
+    },
+    {
+      "src": "/auth\\.js",
+      "dest": "/auth.js"
+    },
+    {
+      "src": "/ui\\.js",
+      "dest": "/ui.js"
+    },
+    {
+      "src": "/pages-admin\\.js",
+      "dest": "/pages-admin.js"
+    },
+    {
+      "src": "/pages-member\\.js",
+      "dest": "/pages-member.js"
+    },
+    {
+      "src": "/app\\.js",
+      "dest": "/app.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

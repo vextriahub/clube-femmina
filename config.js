@@ -15,9 +15,6 @@ const CONFIG = {
 
   // NOTE: The browser config does not expose the Supabase anon key.
 
-  // ========== ASAAS PAYMENT ===========
-  ASAAS_API_KEY: ENV.ASAAS_API_KEY || '',
-  
   // ========== ASAAS PAYMENT ==========
   ASAAS_API_KEY: ENV.ASAAS_API_KEY || '',
   ASAAS_WEBHOOK_SECRET: ENV.ASAAS_WEBHOOK_SECRET || '',
@@ -39,17 +36,7 @@ const CONFIG = {
   CLINIC_CNPJ: '00.000.000/0000-00',
   
   // ========== DEMO CREDENTIALS (ONLY FOR DEVELOPMENT) ==========
-  DEMO_ENABLED: ENV.DEMO_ENABLED === 'true' || true, // Desabilitar em produção
-  DEMO_CREDENTIALS: {
-    member: {
-      email: 'demo.member@femmina.com',
-      password: 'demo123456'
-    },
-    admin: {
-      email: 'demo.admin@femmina.com',
-      password: 'demo123456'
-    }
-  },
+  DEMO_ENABLED: ENV.DEMO_ENABLED === 'true' || false,
   
   // ========== FEATURE FLAGS ==========
   FEATURES: {
