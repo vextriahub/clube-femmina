@@ -179,17 +179,30 @@ function showLogin() {
   document.getElementById('register-form-wrap').style.display = 'none';
 }
 
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function clearLoginError() {
+  const el = document.getElementById('login-error');
+  if (el) el.style.display = 'none';
+}
+
 async function doLogin() {
+  clearLoginError();
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
 
   if (!email || !password) {
-    showToast('Preencha todos os campos obrigatórios', 'error');
+    showLoginError('Preencha e-mail e senha para continuar.');
     return;
   }
 
   if (!email.includes('@')) {
-    showToast('E-mail inválido', 'error');
+    showLoginError('E-mail inválido.');
     return;
   }
 
@@ -202,12 +215,12 @@ async function doLogin() {
     const user = result.user;
 
     if (currentLoginTab === 'admin' && user.role !== 'admin') {
-      showToast('Acesso de administrador necessário', 'error');
+      showLoginError('Acesso de administrador necessário.');
       return;
     }
 
     if (currentLoginTab === 'member' && user.role !== 'member') {
-      showToast('Acesso de sócio necessário', 'error');
+      showLoginError('Acesso de sócio necessário.');
       return;
     }
 
@@ -215,6 +228,7 @@ async function doLogin() {
   } catch (err) {
     console.error('Erro no login:', err);
     const message = window.API.handleError(err) || 'Erro ao fazer login. Tente novamente.';
+    showLoginError(message);
     showToast(message, 'error');
   } finally {
     btn.innerHTML = 'Entrar no painel';
@@ -1344,7 +1358,7 @@ function showToast(msg, type = 'info') {
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `<span style="flex-shrink:0">${icons[type]||'ℹ'}</span><span>${msg}</span>`;
   container.appendChild(toast);
-  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, type === 'error' ? 5000 : 3000);
 }
 
 // ── BOOT ──────────────────────────────────────────────

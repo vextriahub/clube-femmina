@@ -368,18 +368,17 @@ window.API = {
 
   // Tratamento de erros HTTP
   handleError(err) {
+    if (!err.status && (err.name === 'TypeError' || (err.message || '').toLowerCase().includes('fetch'))) {
+      return 'Servidor indisponível. Verifique sua conexão e tente novamente.';
+    }
     if (err.status === 401) {
       console.warn('⚠️ Sessão expirada');
       auth.logout();
       window.location.href = '#login';
       return 'Sessão expirada, faça login novamente';
     }
-    if (err.status === 403) {
-      return 'Acesso negado';
-    }
-    if (err.status === 409) {
-      return 'Recurso já existe';
-    }
+    if (err.status === 403) return 'Acesso negado';
+    if (err.status === 409) return 'Recurso já existe';
     return err.message || 'Erro na comunicação com servidor';
   }
 };
