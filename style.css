@@ -101,6 +101,15 @@ body {
 body.dark-theme .auth-side { background: linear-gradient(160deg, #010712 0%, #030D26 28%, #071B4E 60%, #0D5BAE 100%); }
 body.dark-theme .home-header-nav { background: transparent; }
 body.dark-theme .home-logo-name { background: none !important; -webkit-background-clip: unset !important; background-clip: unset !important; -webkit-text-fill-color: #7DD3FC !important; color: #7DD3FC !important; }
+
+/* Auth modal dark mode */
+body.dark-theme .auth-tabs { background: rgba(255,255,255,0.08); }
+body.dark-theme .auth-tabs button.active { background: var(--p-600); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+body.dark-theme .auth-tabs button:not(.active) { color: rgba(255,255,255,0.6); }
+body.dark-theme .auth-divider::before, body.dark-theme .auth-divider::after { border-bottom-color: rgba(255,255,255,0.15); }
+body.dark-theme .auth-divider span { color: rgba(255,255,255,0.5); }
+body.dark-theme .auth-btn-outline { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+body.dark-theme .auth-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); }
 body.dark-theme .home-price-main { background: transparent; border-color: rgba(255,255,255,0.1); }
 body.dark-theme .benefit-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
 body.dark-theme .home-stat { background: rgba(255,255,255,0.04); }
