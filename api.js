@@ -3,7 +3,10 @@
  * Fornece funções para comunicação segura com o backend Express
  */
 
-const API_BASE_URL = window.CONFIG?.API_URL || 'http://localhost:3001';
+// Em produção (não-localhost) usa same-origin; em dev aponta para porta 3001
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? (window.CONFIG?.API_URL || 'http://localhost:3001')
+  : '';
 
 /**
  * Classe para gerenciar requisições HTTP com token JWT

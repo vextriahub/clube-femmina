@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "*.{html,css,js}",
       "use": "@vercel/static"
     }
@@ -46,6 +50,30 @@
     {
       "src": "/app\\.js",
       "dest": "/app.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/user/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/users(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/dependents(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/appointments(.*)",
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",

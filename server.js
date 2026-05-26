@@ -22,7 +22,7 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('❌ ERRO: Variáveis de ambiente SUPABASE_URL e SUPABASE_ANON_KEY não configuradas!');
-  process.exit(1);
+  if (!process.env.VERCEL) process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -30,7 +30,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // ====== MIDDLEWARE DE SEGURANÇA ======
 app.use(helmet()); // Headers de segurança
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:5000', 'http://localhost:3000'],
+  origin: process.env.FRONTEND_URL || (process.env.VERCEL ? true : ['http://localhost:5000', 'http://localhost:3000']),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -653,7 +653,7 @@ app.use((err, req, res, next) => {
 });
 
 // ====== INICIALIZAÇÃO ======
-app.listen(PORT, () => {
+if (!process.env.VERCEL) app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════╗
 ║   🏥 Clube Femmina API - v1.0.0       ║
