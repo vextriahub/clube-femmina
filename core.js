@@ -138,13 +138,9 @@ async function getAppointments() { return await DB.getAppointments(); }
 
 function uid() { return 'id-' + Math.random().toString(36).slice(2, 9); }
 
-async function genCardNo() {
-  const users = await getUsers();
-  const max = users.reduce((m, u) => {
-    const n = parseInt((u.numero_carteirinha || 'CF-000000').replace('CF-', ''));
-    return n > m ? n : m;
-  }, 0);
-  return 'CF-' + String(max + 1).padStart(6, '0');
+function genCardNo() {
+  // Gera número aleatório sem precisar de token — o servidor garante unicidade
+  return 'CF-' + String(Math.floor(Math.random() * 900000) + 100000);
 }
 
 // ── ASAAS MOCK ────────────────────────────────────────

@@ -52,7 +52,15 @@ class APIClient {
         ...options
       });
 
-      const data = await response.json();
+      // Trata respostas não-JSON (ex: rate limiter retorna texto puro)
+      const contentType = response.headers.get('content-type') || '';
+      let data;
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        data = { error: text || 'Erro na requisição' };
+      }
 
       if (!response.ok) {
         const error = new Error(data.error || 'Erro na requisição');
