@@ -18,10 +18,12 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // ====== INICIALIZAÇÃO SUPABASE ======
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+// Prefer service role key (bypasses RLS) for server-side operations;
+// fall back to anon key if service role key is not configured.
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ ERRO: Variáveis de ambiente SUPABASE_URL e SUPABASE_ANON_KEY não configuradas!');
+  console.error('❌ ERRO: Variáveis de ambiente SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (ou SUPABASE_ANON_KEY) não configuradas!');
   if (!process.env.VERCEL) process.exit(1);
 }
 
