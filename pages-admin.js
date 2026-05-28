@@ -281,14 +281,26 @@ function filterAppts(filter) {
   renderApptsTable();
 }
 
-function cancelAppt(id) {
-  showToast('Consulta cancelada', 'info');
-  renderApptsTable();
+async function cancelAppt(id) {
+  if (!confirm('Cancelar esta consulta?')) return;
+  try {
+    await window.API.appointments.cancel(id);
+    showToast('Consulta cancelada', 'info');
+    await loadAgendamentos();
+  } catch (err) {
+    showToast(window.API.handleError(err) || 'Erro ao cancelar consulta', 'error');
+  }
 }
 
-function completeAppt(id) {
-  showToast('Consulta marcada como concluída', 'success');
-  renderApptsTable();
+async function completeAppt(id) {
+  if (!confirm('Marcar esta consulta como concluída?')) return;
+  try {
+    await window.API.appointments.complete(id);
+    showToast('Consulta concluída', 'success');
+    await loadAgendamentos();
+  } catch (err) {
+    showToast(window.API.handleError(err) || 'Erro ao concluir consulta', 'error');
+  }
 }
 
 // ── VERIFICAR ─────────────────────────────────────────

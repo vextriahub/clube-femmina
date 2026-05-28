@@ -283,6 +283,16 @@ const appointments = {
       console.error('❌ Erro ao cancelar agendamento:', err.message);
       throw err;
     }
+  },
+
+  async complete(id) {
+    try {
+      const data = await apiClient.put(`/appointments/${encodeURIComponent(id)}/complete`);
+      return data.appointment;
+    } catch (err) {
+      console.error('❌ Erro ao concluir agendamento:', err.message);
+      throw err;
+    }
   }
 };
 

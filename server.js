@@ -596,6 +596,31 @@ app.put('/appointments/:id/cancel', verifyToken, async (req, res) => {
 });
 
 /**
+ * PUT /appointments/:id/complete - Conclui um agendamento (admin only)
+ */
+app.put('/appointments/:id/complete', verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    const { id } = req.params;
+    const { data: existing, error: fetchError } = await supabase.from('appointments').select('*').eq('id', id).single();
+    if (fetchError) {
+      return res.status(404).json({ error: 'Agendamento não encontrado' });
+    }
+
+    const { data, error } = await supabase.from('appointments').update({ status: 'completed' }).eq('id', id).select().single();
+    if (error) throw error;
+
+    res.json({ success: true, appointment: data });
+  } catch (err) {
+    console.error('❌ Erro ao concluir agendamento:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+/**
  * POST /users - Cria um novo sócio (admin only)
  */
 app.post('/users', verifyToken, async (req, res) => {
