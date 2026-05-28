@@ -93,7 +93,7 @@ async function renderSociosTable() {
   }
 
   body.innerHTML = filtered.map(u => {
-    const depCount = deps.filter(d => d.usuario_id === u.id).length;
+    const depCount = deps.filter(d => d.user_id === u.id || d.usuario_id === u.id).length;
     return `
       <tr>
         <td>
@@ -132,9 +132,9 @@ async function viewSocio(id) {
   if (!user) return;
   currentViewSocioId = id;
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === id);
+  const deps = allDeps.filter(d => d.user_id === id || d.usuario_id === id);
   const allAppts = await getAppointments();
-  const appts = allAppts.filter(a => a.usuario_id === id);
+  const appts = allAppts.filter(a => a.user_id === id || a.usuario_id === id);
 
   document.getElementById('view-socio-name').textContent = user.nome;
   document.getElementById('view-socio-card-no').textContent = user.numero_carteirinha;
@@ -155,8 +155,15 @@ async function viewSocio(id) {
         <div style="font-weight:500;font-size:13px">${user.email}</div>
       </div>
       <div style="background:var(--slate-50);border-radius:var(--radius-md);padding:14px">
-        <div style="font-size:11px;color:var(--slate-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Status</div>
-        ${statusBadge(user.status_pagamento)}
+        <div style="font-size:11px;color:var(--slate-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Status</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['active','pending','inactive'].map(s => {
+            const labels = {active:'Em dia', pending:'Pendente', inactive:'Inadimplente'};
+            const colors = {active:'var(--green-600)', pending:'var(--amber-600)', inactive:'var(--rose-600)'};
+            const isActive = user.status_pagamento === s;
+            return `<button onclick="updateSocioStatus('${user.id}','${s}')" style="font-size:12px;padding:4px 10px;border-radius:20px;border:1.5px solid ${colors[s]};background:${isActive ? colors[s] : 'transparent'};color:${isActive ? '#fff' : colors[s]};cursor:pointer;font-weight:600">${labels[s]}</button>`;
+          }).join('')}
+        </div>
       </div>
     </div>
 
@@ -195,35 +202,109 @@ async function viewSocio(id) {
 }
 
 function openNewSocioModal() {
-  ['ns-name','ns-cpf','ns-phone','ns-email'].forEach(id => document.getElementById(id).value = '');
+  ['ns-name','ns-cpf','ns-phone','ns-email','ns-password'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   document.getElementById('ns-status').value = 'active';
   document.getElementById('modal-new-socio').style.display = 'flex';
 }
 
 async function saveNewSocio() {
-  const name = document.getElementById('ns-name').value.trim();
-  const cpf = document.getElementById('ns-cpf').value.trim();
-  const phone = document.getElementById('ns-phone').value.trim();
-  const email = document.getElementById('ns-email').value.trim();
-  const status = document.getElementById('ns-status').value;
+  const name     = document.getElementById('ns-name').value.trim();
+  const cpf      = document.getElementById('ns-cpf').value.trim();
+  const phone    = document.getElementById('ns-phone').value.trim();
+  const email    = document.getElementById('ns-email').value.trim();
+  const password = (document.getElementById('ns-password')?.value || '').trim();
+  const status   = document.getElementById('ns-status').value;
 
-  if (!name || !cpf || !phone || !email) { showToast('Preencha todos os campos obrigatórios', 'error'); return; }
+  if (!name || !cpf || !phone || !email || !password) {
+    showToast('Preencha todos os campos obrigatórios', 'error'); return;
+  }
   if (cpf.replace(/\D/g,'').length !== 11) { showToast('CPF inválido', 'error'); return; }
+  if (password.length < 8) { showToast('Senha deve ter mínimo 8 caracteres', 'error'); return; }
 
-  const users = await getUsers();
-  if (users.find(u => u.cpf === cpf)) { showToast('CPF já cadastrado', 'error'); return; }
-
-  const cardNo = await genCardNo();
-  const nu = { nome: name, cpf, telefone: phone, email, password: '123456', numero_carteirinha: cardNo, status_pagamento: status, role: 'member', asaas_id: 'cus_' + uid(), created_at: new Date().toISOString().split('T')[0] };
+  const cardNo = genCardNo();
+  const nu = {
+    nome: name, cpf, telefone: phone, email, password,
+    numero_carteirinha: cardNo, status_pagamento: status, role: 'member'
+  };
 
   try {
     await DB.saveUser(nu);
     closeModal('modal-new-socio');
-    showToast('Sócio cadastrado! Carteirinha: ' + nu.numero_carteirinha, 'success');
+    showToast('Sócio cadastrado! Carteirinha: ' + cardNo, 'success');
     await renderSociosTable();
   } catch (e) {
     console.error(e);
-    showToast('Erro ao salvar sócio', 'error');
+    showToast(window.API.handleError(e) || 'Erro ao salvar sócio', 'error');
+  }
+}
+
+async function updateSocioStatus(id, status) {
+  try {
+    await window.API.admin.updateUser(id, { status_pagamento: status });
+    showToast('Status atualizado', 'success');
+    await viewSocio(id);          // recarrega o modal com novo estado
+    await renderSociosTable();    // atualiza a tabela em fundo
+  } catch (err) {
+    showToast(window.API.handleError(err) || 'Erro ao atualizar status', 'error');
+  }
+}
+
+async function editSocio(id) {
+  const users = await getUsers();
+  const u = users.find(u => u.id === id);
+  if (!u) return;
+
+  document.getElementById('edit-profile-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'edit-profile-modal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'display:flex;z-index:10002';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:420px;width:100%;padding:32px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h3 style="font-size:18px;font-weight:700;color:var(--slate-900);margin:0">Editar sócio</h3>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('edit-profile-modal').remove()">✕</button>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label style="font-size:13px;font-weight:600;color:var(--slate-600);display:block;margin-bottom:6px">Nome completo</label>
+        <input type="text" id="es-nome" class="form-input" value="${u.nome || ''}">
+      </div>
+      <div class="form-group" style="margin-bottom:24px">
+        <label style="font-size:13px;font-weight:600;color:var(--slate-600);display:block;margin-bottom:6px">Telefone</label>
+        <input type="text" id="es-telefone" class="form-input" value="${u.telefone || ''}" maxlength="15" oninput="maskPhone(this)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button class="btn btn-outline" onclick="document.getElementById('edit-profile-modal').remove()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-socio" onclick="saveSocioEdit('${id}')">Salvar</button>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+  document.getElementById('es-nome').focus();
+}
+
+async function saveSocioEdit(id) {
+  const nome     = document.getElementById('es-nome').value.trim();
+  const telefone = document.getElementById('es-telefone').value.trim();
+
+  if (!nome || nome.length < 2) { showToast('Nome inválido', 'error'); return; }
+
+  const btn = document.getElementById('btn-save-socio');
+  btn.textContent = 'Salvando…'; btn.disabled = true;
+
+  try {
+    await window.API.admin.updateUser(id, { nome, telefone });
+    document.getElementById('edit-profile-modal').remove();
+    showToast('Dados atualizados', 'success');
+    await viewSocio(id);
+    await renderSociosTable();
+  } catch (err) {
+    showToast(window.API.handleError(err) || 'Erro ao salvar', 'error');
+    btn.textContent = 'Salvar'; btn.disabled = false;
   }
 }
 

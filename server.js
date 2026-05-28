@@ -624,6 +624,50 @@ app.put('/appointments/:id/cancel', verifyToken, async (req, res) => {
 });
 
 /**
+ * PUT /users/:id - Atualiza dados de um sócio (admin only)
+ * Corpo: { nome?, telefone?, status_pagamento? }
+ */
+app.put('/users/:id', verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    const { id } = req.params;
+    const { nome, telefone, status_pagamento } = req.body;
+
+    const allowedStatus = ['active', 'pending', 'inactive'];
+    if (status_pagamento && !allowedStatus.includes(status_pagamento)) {
+      return res.status(400).json({ error: 'Status inválido' });
+    }
+
+    const payload = {};
+    if (nome !== undefined) payload.nome = nome.trim();
+    if (telefone !== undefined) payload.telefone = telefone?.trim() || null;
+    if (status_pagamento !== undefined) payload.status_pagamento = status_pagamento;
+
+    if (Object.keys(payload).length === 0) {
+      return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .update(payload)
+      .eq('id', id)
+      .select('id, email, nome, telefone, role, status_pagamento, numero_carteirinha, created_at')
+      .single();
+
+    if (error) throw error;
+
+    console.log(`✅ Admin atualizou usuário ${id}`);
+    res.json({ success: true, user: data });
+  } catch (err) {
+    console.error('❌ Erro ao atualizar usuário:', err);
+    res.status(500).json({ error: 'Erro ao atualizar usuário' });
+  }
+});
+
+/**
  * PUT /appointments/:id/complete - Conclui um agendamento (admin only)
  */
 app.put('/appointments/:id/complete', verifyToken, async (req, res) => {

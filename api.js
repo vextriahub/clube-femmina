@@ -381,6 +381,22 @@ const admin = {
       console.error('❌ Erro ao criar usuário:', err.message);
       throw err;
     }
+  },
+
+  /**
+   * Atualiza dados de um sócio (nome, telefone, status_pagamento)
+   * @param {string} id
+   * @param {object} dados
+   */
+  async updateUser(id, dados) {
+    try {
+      const data = await apiClient.put(`/users/${encodeURIComponent(id)}`, dados);
+      console.log(`✅ Sócio atualizado: ${id}`);
+      return data.user;
+    } catch (err) {
+      console.error('❌ Erro ao atualizar usuário:', err.message);
+      throw err;
+    }
   }
 };
 
