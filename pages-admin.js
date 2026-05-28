@@ -267,9 +267,10 @@ async function saveNewSocio() {
 async function updateSocioStatus(id, status) {
   try {
     await window.API.admin.updateUser(id, { status_pagamento: status });
+    _bust('users');
     showToast('Status atualizado', 'success');
-    await viewSocio(id);          // recarrega o modal com novo estado
-    await renderSociosTable();    // atualiza a tabela em fundo
+    await viewSocio(id);
+    await renderSociosTable();
   } catch (err) {
     showToast(window.API.handleError(err) || 'Erro ao atualizar status', 'error');
   }
@@ -321,6 +322,7 @@ async function saveSocioEdit(id) {
 
   try {
     await window.API.admin.updateUser(id, { nome, telefone });
+    _bust('users');
     document.getElementById('edit-profile-modal').remove();
     showToast('Dados atualizados', 'success');
     await viewSocio(id);
@@ -389,6 +391,7 @@ async function cancelAppt(id) {
   if (!confirm('Cancelar esta consulta?')) return;
   try {
     await window.API.appointments.cancel(id);
+    _bust('appointments');
     showToast('Consulta cancelada', 'info');
     await loadAgendamentos();
   } catch (err) {
@@ -400,6 +403,7 @@ async function completeAppt(id) {
   if (!confirm('Marcar esta consulta como concluída?')) return;
   try {
     await window.API.appointments.complete(id);
+    _bust('appointments');
     showToast('Consulta concluída', 'success');
     await loadAgendamentos();
   } catch (err) {

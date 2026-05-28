@@ -55,11 +55,24 @@ function initSidebarParticles() {
   }
 }
 
+// ── SIMPLE IN-MEMORY CACHE (30s TTL) ─────────────────
+const _cache = {};
+const CACHE_TTL = 30_000;
+
+function _cached(key, fetchFn) {
+  const now = Date.now();
+  const hit = _cache[key];
+  if (hit && now - hit.ts < CACHE_TTL) return Promise.resolve(hit.data);
+  return fetchFn().then(data => { _cache[key] = { data, ts: now }; return data; });
+}
+
+function _bust(key) { delete _cache[key]; }
+
 // ── DATABASE API WRAPPER ─────────────────────────────
 const DB = {
   async getUsers() {
     try {
-      return await window.API.admin.listUsers();
+      return await _cached('users', () => window.API.admin.listUsers());
     } catch (err) {
       console.error('❌ Erro ao obter sócios:', err);
       return [];
@@ -67,7 +80,7 @@ const DB = {
   },
   async getAdmins() {
     try {
-      const users = await window.API.admin.listUsers();
+      const users = await _cached('users', () => window.API.admin.listUsers());
       return users.filter(u => u.role === 'admin');
     } catch (err) {
       console.error('❌ Erro ao obter administradores:', err);
@@ -76,7 +89,7 @@ const DB = {
   },
   async getDependents() {
     try {
-      return await window.API.dependents.list();
+      return await _cached('dependents', () => window.API.dependents.list());
     } catch (err) {
       console.error('❌ Erro ao obter dependentes:', err);
       return [];
@@ -84,7 +97,7 @@ const DB = {
   },
   async getAppointments() {
     try {
-      return await window.API.appointments.list();
+      return await _cached('appointments', () => window.API.appointments.list());
     } catch (err) {
       console.error('❌ Erro ao obter agendamentos:', err);
       return [];
@@ -92,7 +105,9 @@ const DB = {
   },
   async saveUser(user) {
     try {
-      return await window.API.admin.createUser(user);
+      const result = await window.API.admin.createUser(user);
+      _bust('users');
+      return result;
     } catch (err) {
       console.error('❌ Error saving user:', err);
       throw err;
@@ -100,7 +115,9 @@ const DB = {
   },
   async saveDependent(dep) {
     try {
-      return await window.API.dependents.create(dep);
+      const result = await window.API.dependents.create(dep);
+      _bust('dependents');
+      return result;
     } catch (err) {
       console.error('❌ Error saving dependent:', err);
       throw err;
@@ -108,7 +125,9 @@ const DB = {
   },
   async saveAppointment(appt) {
     try {
-      return await window.API.appointments.create(appt);
+      const result = await window.API.appointments.create(appt);
+      _bust('appointments');
+      return result;
     } catch (err) {
       console.error('❌ Error saving appointment:', err);
       throw err;

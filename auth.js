@@ -145,6 +145,27 @@ function loginSuccess(user, token) {
   initApp();
 }
 
+function confirmLogout() {
+  document.getElementById('edit-profile-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'edit-profile-modal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'display:flex;z-index:10001';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:360px;width:100%;padding:32px;text-align:center">
+      <div style="font-size:36px;margin-bottom:12px">👋</div>
+      <h3 style="font-size:17px;font-weight:700;margin:0 0 8px">Sair da conta?</h3>
+      <p style="font-size:14px;color:var(--slate-500);margin:0 0 24px">Você precisará fazer login novamente para acessar o painel.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button class="btn btn-outline" onclick="document.getElementById('edit-profile-modal').remove()">Cancelar</button>
+        <button class="btn btn-primary" onclick="document.getElementById('edit-profile-modal').remove();logout()">Sair</button>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
 function logout() {
   sessionStorage.removeItem('femmina_session');
   sessionStorage.removeItem('token');
