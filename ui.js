@@ -28,6 +28,23 @@ function getMonthShort(dateStr) {
   return months[parseInt(dateStr.split('-')[1]) - 1];
 }
 
+function relativeTime(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  if (isNaN(d)) return '–';
+  const diffMs  = Date.now() - d;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffH   = Math.floor(diffMs / 3600000);
+  const diffD   = Math.floor(diffMs / 86400000);
+  if (diffMin <  2) return 'Agora mesmo';
+  if (diffMin < 60) return `Há ${diffMin} min`;
+  if (diffH   <  2) return 'Há 1 hora';
+  if (diffH   < 24) return `Há ${diffH} horas`;
+  if (diffD   ===1) return 'Ontem';
+  if (diffD   <  7) return `Há ${diffD} dias`;
+  if (diffD   < 30) return `Há ${Math.floor(diffD / 7)} sem.`;
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+}
+
 function getNextDueDate() {
   const d = new Date();
   d.setMonth(d.getMonth() + 1);

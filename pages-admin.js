@@ -25,23 +25,45 @@ async function loadDashboard() {
   const todayEl = document.getElementById('dashboard-today-date');
   if (todayEl) todayEl.textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
-  const activity = [
-    { text: 'João Silva agendou consulta de Clínica Geral', time: 'Hoje, 09:15' },
-    { text: 'Maria Oliveira cadastrou dependente', time: 'Ontem, 14:30' },
-    { text: 'Ana Paula pagou mensalidade', time: '2 dias atrás' },
-    { text: 'Carlos Lima em pendência de pagamento', time: '5 dias atrás' },
-  ];
+  // Atividade real: combina registros de usuários e agendamentos, ordena por data
+  const apptVerbs   = { confirmed: 'agendou', completed: 'concluiu', cancelled: 'cancelou' };
+  const apptIcons   = { confirmed: '📅', completed: '✅', cancelled: '❌' };
+
+  const events = [
+    ...users
+      .filter(u => u.created_at)
+      .map(u => ({
+        date: new Date(u.created_at),
+        icon: '👤',
+        text: `${u.nome.split(' ')[0]} se cadastrou como sócio`
+      })),
+    ...appts
+      .filter(a => a.created_at)
+      .map(a => ({
+        date: new Date(a.created_at),
+        icon: apptIcons[a.status] || '📅',
+        text: `${(a.paciente_nome || 'Paciente').split(' ')[0]} ${apptVerbs[a.status] || 'agendou'} ${a.tipo || 'consulta'}`
+      }))
+  ]
+    .sort((a, b) => b.date - a.date)
+    .slice(0, 6);
 
   const actEl = document.getElementById('dashboard-activity');
-  if (actEl) actEl.innerHTML = activity.map(a => `
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div>
-        <div style="font-size:13px;color:var(--tx2)">${a.text}</div>
-        <div style="font-size:12px;color:var(--tx3);margin-top:2px">${a.time}</div>
-      </div>
-    </div>
-  `).join('');
+  if (actEl) {
+    if (events.length === 0) {
+      actEl.innerHTML = `<div style="text-align:center;padding:24px 0;color:var(--tx3);font-size:13px">Nenhuma atividade recente</div>`;
+    } else {
+      actEl.innerHTML = events.map(e => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div>
+            <div style="font-size:13px;color:var(--tx2)">${e.icon} ${e.text}</div>
+            <div style="font-size:12px;color:var(--tx3);margin-top:2px">${relativeTime(e.date)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 
   const todayAppts = appts.filter(a => a.data_hora && a.data_hora.startsWith(today));
   const apptEl = document.getElementById('dashboard-today-appointments');
