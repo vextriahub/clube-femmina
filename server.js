@@ -157,7 +157,7 @@ app.post('/auth/login', authLimiter, async (req, res) => {
     // Busca usuário no Supabase
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, email, password_hash, role, nome, status_pagamento')
+      .select('id, email, password_hash, role, nome, cpf, telefone, numero_carteirinha, status_pagamento, created_at')
       .eq('email', email.toLowerCase())
       .single();
 
@@ -190,7 +190,11 @@ app.post('/auth/login', authLimiter, async (req, res) => {
         email: users.email,
         nome: users.nome,
         role: users.role,
-        status_pagamento: users.status_pagamento
+        cpf: users.cpf,
+        telefone: users.telefone,
+        numero_carteirinha: users.numero_carteirinha,
+        status_pagamento: users.status_pagamento,
+        created_at: users.created_at
       }
     });
 
@@ -460,7 +464,13 @@ app.get('/dependents', verifyToken, async (req, res) => {
     const { data, error } = await query;
     if (error) throw error;
 
-    res.json({ success: true, dependents: data || [] });
+    // Normaliza alias usuario_id para compatibilidade com frontend
+    const normalized = (data || []).map(d => ({
+      ...d,
+      usuario_id: d.user_id  // alias
+    }));
+
+    res.json({ success: true, dependents: normalized });
   } catch (err) {
     console.error('❌ Erro ao listar dependentes:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
@@ -540,10 +550,18 @@ app.get('/appointments', verifyToken, async (req, res) => {
       query = query.eq('user_id', req.query.user_id);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.order('data_hora', { ascending: false });
     if (error) throw error;
 
-    res.json({ success: true, appointments: data || [] });
+    // Normaliza aliases para compatibilidade com o frontend
+    const normalized = (data || []).map(a => ({
+      ...a,
+      usuario_id:   a.user_id,       // alias
+      dependente_id: a.dependent_id, // alias
+      notas:        a.observacoes    // alias
+    }));
+
+    res.json({ success: true, appointments: normalized });
   } catch (err) {
     console.error('❌ Erro ao listar agendamentos:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });

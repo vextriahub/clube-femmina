@@ -357,23 +357,30 @@ async function renderApptsTable() {
 
   const users = await getUsers();
   body.innerHTML = filtered.map(a => {
-    const user = users.find(u => u.id === a.usuario_id);
+    // Suporta tanto user_id quanto usuario_id (normalizado no servidor)
+    const ownerId = a.usuario_id || a.user_id;
+    const owner   = users.find(u => u.id === ownerId);
+    const obs     = a.notas || a.observacoes || '';
+    // Permite concluir qualquer consulta confirmada do passado ou de hoje
+    const apptDate = (a.data_hora || '').split(' ')[0];
+    const canComplete = a.status === 'confirmed' && apptDate <= today;
     return `
       <tr>
         <td>
-          <div style="font-weight:500;color:var(--slate-900)">${a.paciente_nome}</div>
-          <div style="font-size:12px;color:var(--slate-400)">${user ? 'Titular: ' + user.nome : ''}</div>
+          <div style="font-weight:500;color:var(--tx1)">${a.paciente_nome || '–'}</div>
+          <div style="font-size:12px;color:var(--tx3)">${owner ? 'Titular: ' + owner.nome : ''}</div>
+          ${obs ? `<div style="font-size:11px;color:var(--tx4);font-style:italic;margin-top:2px">📝 ${obs}</div>` : ''}
         </td>
         <td>
-          <div style="font-weight:500">${formatDate(a.data_hora.split(' ')[0])}</div>
-          <div style="font-size:12px;color:var(--slate-400)">${a.data_hora.split(' ')[1]}</div>
+          <div style="font-weight:500">${formatDate((a.data_hora || '').split(' ')[0])}</div>
+          <div style="font-size:12px;color:var(--tx3)">${(a.data_hora || '').split(' ')[1] || ''}</div>
         </td>
-        <td><span class="badge badge-blue">${a.tipo}</span></td>
+        <td><span class="badge badge-blue">${a.tipo || '–'}</span></td>
         <td>${statusBadge(a.status)}</td>
         <td>
           <div style="display:flex;gap:6px">
             ${a.status === 'confirmed' ? `<button class="btn btn-ghost btn-icon-sm" onclick="cancelAppt('${a.id}')" title="Cancelar">✕</button>` : ''}
-            ${a.status === 'confirmed' && a.data_hora.split(' ')[0] === today ? `<button class="btn btn-ghost btn-icon-sm" onclick="completeAppt('${a.id}')" title="Concluir">✓</button>` : ''}
+            ${canComplete ? `<button class="btn btn-ghost btn-icon-sm" onclick="completeAppt('${a.id}')" title="Concluir" style="color:var(--g-600)">✓</button>` : ''}
           </div>
         </td>
       </tr>
@@ -435,7 +442,7 @@ async function verifySocio() {
 
   const status = await checkAsaasStatus(user.id);
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === user.id);
+  const deps = allDeps.filter(d => (d.usuario_id || d.user_id) === user.id);
 
   const statusInfo = {
     active: { label: 'Em dia', color: 'green', icon: '✅', msg: 'Mensalidade em dia. Consulta autorizada.' },
@@ -511,7 +518,7 @@ async function loadDependentsForAppt() {
   const users = await getUsers();
   const user = users.find(u => u.id === userId);
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === userId);
+  const deps = allDeps.filter(d => (d.usuario_id || d.user_id) === userId);
 
   patientSelect.innerHTML = `<option value="titular">${user.nome} (Titular)</option>` +
     deps.map(d => `<option value="${d.id}">${d.nome} (${d.parentesco})</option>`).join('');
@@ -538,10 +545,15 @@ async function saveAdminAppt() {
   const dep = patient !== 'titular' ? allDeps.find(d => d.id === patient) : null;
 
   const na = {
-    usuario_id: userId,
+    usuario_id:    userId,
+    user_id:       userId,
     dependente_id: dep ? dep.id : null,
-    data_hora: date + ' ' + time,
-    tipo: type, status: 'confirmed', notas: '',
+    dependent_id:  dep ? dep.id : null,
+    data_hora:     date + ' ' + time,
+    tipo:          type,
+    status:        'confirmed',
+    notas:         '',
+    observacoes:   '',
     paciente_nome: dep ? dep.nome : user.nome
   };
 
