@@ -31,7 +31,6 @@
 
 // ── STATE ─────────────────────────────────────────────
 let currentUser = null;
-let currentLoginTab = 'member';
 let currentViewSocioId = null;
 let currentApptFilter = 'all';
 let currentMyApptFilter = 'upcoming';

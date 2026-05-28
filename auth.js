@@ -1,10 +1,4 @@
 // ── AUTH ──────────────────────────────────────────────
-function switchLoginTab(tab) {
-  currentLoginTab = tab;
-  document.getElementById('tab-member').classList.toggle('active', tab === 'member');
-  document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
-}
-
 function showRegister() {
   document.getElementById('login-form-wrap').style.display = 'none';
   document.getElementById('register-form-wrap').style.display = 'block';
@@ -48,19 +42,7 @@ async function doLogin() {
 
   try {
     const result = await window.API.auth.login(email, password);
-    const user = result.user;
-
-    if (currentLoginTab === 'admin' && user.role !== 'admin') {
-      showLoginError('Acesso de administrador necessário.');
-      return;
-    }
-
-    if (currentLoginTab === 'member' && user.role !== 'member') {
-      showLoginError('Acesso de sócio necessário.');
-      return;
-    }
-
-    loginSuccess(user, result.token);
+    loginSuccess(result.user, result.token);
   } catch (err) {
     console.error('Erro no login:', err);
     const message = window.API.handleError(err) || 'Erro ao fazer login. Tente novamente.';
@@ -100,7 +82,7 @@ async function doRegister() {
   }
 
   try {
-    const cardNo = await genCardNo();
+    const cardNo = genCardNo();
     const result = await window.API.auth.register({
       email,
       password,

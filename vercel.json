@@ -56,10 +56,6 @@
       "dest": "/server.js"
     },
     {
-      "src": "/debug/(.*)",
-      "dest": "/server.js"
-    },
-    {
       "src": "/auth/(.*)",
       "dest": "/server.js"
     },
