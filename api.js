@@ -313,6 +313,22 @@ const user = {
   },
 
   /**
+   * Atualiza nome e telefone do perfil
+   * @param {object} dados - { nome, telefone }
+   * @returns {Promise<{user}>}
+   */
+  async updateProfile(dados) {
+    try {
+      const data = await apiClient.put('/user/profile', dados);
+      console.log('✅ Perfil atualizado');
+      return data.user;
+    } catch (err) {
+      console.error('❌ Erro ao atualizar perfil:', err.message);
+      throw err;
+    }
+  },
+
+  /**
    * Altera senha do usuário
    * @param {string} senhaAtual
    * @param {string} novaSenha

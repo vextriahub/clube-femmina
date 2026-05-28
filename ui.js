@@ -48,7 +48,76 @@ function checkPayment() {
 }
 
 function editProfile() {
-  showToast('Funcionalidade em breve', 'info');
+  const user = currentUser;
+  if (!user) return;
+
+  // Remove modal anterior se existir
+  document.getElementById('edit-profile-modal')?.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'edit-profile-modal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'display:flex;z-index:10001';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:420px;width:100%;padding:32px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h3 style="font-size:18px;font-weight:700;color:var(--slate-900);margin:0">Editar dados</h3>
+        <button class="btn btn-ghost btn-icon" onclick="document.getElementById('edit-profile-modal').remove()">✕</button>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label style="font-size:13px;font-weight:600;color:var(--slate-600);display:block;margin-bottom:6px">Nome completo</label>
+        <input type="text" id="edit-nome" class="form-input" value="${user.nome || ''}" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group" style="margin-bottom:24px">
+        <label style="font-size:13px;font-weight:600;color:var(--slate-600);display:block;margin-bottom:6px">Telefone</label>
+        <input type="text" id="edit-telefone" class="form-input" value="${user.telefone || ''}" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(this)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button class="btn btn-outline" onclick="document.getElementById('edit-profile-modal').remove()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-profile" onclick="saveProfile()">Salvar</button>
+      </div>
+    </div>
+  `;
+
+  // Fecha ao clicar fora
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+  document.getElementById('edit-nome').focus();
+}
+
+async function saveProfile() {
+  const nome = document.getElementById('edit-nome').value.trim();
+  const telefone = document.getElementById('edit-telefone').value.trim();
+
+  if (!nome || nome.length < 2) {
+    showToast('Nome inválido', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-save-profile');
+  btn.textContent = 'Salvando…';
+  btn.disabled = true;
+
+  try {
+    const updated = await window.API.user.updateProfile({ nome, telefone });
+
+    // Atualiza estado local e sessão
+    currentUser = { ...currentUser, ...updated };
+    sessionStorage.setItem('femmina_session', JSON.stringify(currentUser));
+    sessionStorage.setItem('user', JSON.stringify(currentUser));
+
+    document.getElementById('edit-profile-modal').remove();
+    showToast('Dados atualizados com sucesso', 'success');
+
+    // Recarrega a página de perfil se estiver visível
+    if (document.getElementById('page-minha-conta')?.classList.contains('active')) {
+      await loadMinhaConta();
+    }
+  } catch (err) {
+    showToast(window.API.handleError(err) || 'Erro ao salvar', 'error');
+    btn.textContent = 'Salvar';
+    btn.disabled = false;
+  }
 }
 
 // ── MASKS ─────────────────────────────────────────────

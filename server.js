@@ -329,6 +329,34 @@ app.get('/user/profile', verifyToken, async (req, res) => {
 });
 
 /**
+ * PUT /user/profile - Atualiza dados do perfil (nome e telefone)
+ */
+app.put('/user/profile', verifyToken, async (req, res) => {
+  try {
+    const { nome, telefone } = req.body;
+
+    if (!nome || typeof nome !== 'string' || nome.trim().length < 2) {
+      return res.status(400).json({ error: 'Nome inválido' });
+    }
+
+    const { data: updated, error } = await supabase
+      .from('users')
+      .update({ nome: nome.trim(), telefone: telefone?.trim() || null })
+      .eq('id', req.user.id)
+      .select('id, email, nome, telefone, role, status_pagamento, numero_carteirinha, created_at')
+      .single();
+
+    if (error) throw error;
+
+    console.log(`✅ Perfil atualizado: ${req.user.email}`);
+    res.json({ success: true, user: updated });
+  } catch (err) {
+    console.error('❌ Erro ao atualizar perfil:', err);
+    res.status(500).json({ error: 'Erro ao atualizar perfil' });
+  }
+});
+
+/**
  * PUT /user/password - Altera senha do usuário
  * Corpo: { senhaAtual: string, novaSenha: string }
  */
