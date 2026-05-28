@@ -7,7 +7,8 @@ async function loadDashboard() {
   const totalActive = users.filter(u => u.status_pagamento === 'active').length;
   const totalPending = users.filter(u => u.status_pagamento !== 'active').length;
   const pctEmDia = users.length > 0 ? Math.round((totalActive / users.length) * 100) : 0;
-  const receita = (totalActive * 29.90).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+  const mensalidade = parseFloat((getConfig()['cfg-mensalidade'] || '29,90').replace(',', '.')) || 29.90;
+  const receita = (totalActive * mensalidade).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 
   document.getElementById('stat-total-members').textContent = users.length;
   document.getElementById('stat-paid').textContent = totalActive;
@@ -620,16 +621,40 @@ async function exportCSV() {
 }
 
 // ── CONFIGURACOES ─────────────────────────────────────
+const CFG_KEY = 'femmina_config';
+
+const CFG_DEFAULTS = {
+  'cfg-nome':        'Clube Femmina',
+  'cfg-cnpj':        '12.345.678/0001-90',
+  'cfg-endereco':    'Vila Vicentina Avenida do Contorno Quadra 18 Lote 240/245, Planaltina/DF',
+  'cfg-telefone':    '(61) 3389-1020',
+  'cfg-mensalidade': '29,90',
+  'cfg-consulta':    '90,00',
+};
+
+function getConfig() {
+  try {
+    return { ...CFG_DEFAULTS, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}') };
+  } catch {
+    return { ...CFG_DEFAULTS };
+  }
+}
+
 function loadConfiguracoes() {
-  document.getElementById('cfg-nome').value = 'Clube Femmina';
-  document.getElementById('cfg-cnpj').value = '12.345.678/0001-90';
-  document.getElementById('cfg-endereco').value = 'Vila Vicentina Avenida do Contorno Quadra 18 Lote 240/245, Planaltina/DF';
-  document.getElementById('cfg-telefone').value = '(61) 3389-1020';
-  document.getElementById('cfg-mensalidade').value = '29,90';
-  document.getElementById('cfg-consulta').value = '90,00';
+  const cfg = getConfig();
+  Object.entries(cfg).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
 }
 
 function saveConfig() {
+  const cfg = {};
+  Object.keys(CFG_DEFAULTS).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) cfg[id] = el.value.trim();
+  });
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   showToast('Configurações salvas com sucesso', 'success');
 }
 
