@@ -162,7 +162,7 @@ app.post('/auth/login', authLimiter, async (req, res) => {
       .single();
 
     if (error) {
-      console.warn(`⚠️ Usuário não encontrado: ${email}`);
+      console.warn(`⚠️ Erro ao buscar usuário ${email}:`, JSON.stringify(error));
       return res.status(401).json({ error: 'Email ou senha incorretos' });
     }
 
@@ -256,8 +256,8 @@ app.post('/auth/register', authLimiter, async (req, res) => {
       .single();
 
     if (error) {
-      console.error('❌ Erro ao criar usuário:', error);
-      return res.status(500).json({ error: 'Erro ao registrar usuário' });
+      console.error('❌ Erro ao criar usuário (Supabase):', JSON.stringify(error));
+      return res.status(500).json({ error: 'Erro ao registrar usuário', detail: error.message || error.code });
     }
 
     // Gera token
