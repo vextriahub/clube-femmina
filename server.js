@@ -645,6 +645,41 @@ app.post('/users', verifyToken, async (req, res) => {
   }
 });
 
+/**
+ * GET /debug/check?email=xxx - Diagnóstico temporário (remover após resolver)
+ */
+app.get('/debug/check', async (req, res) => {
+  const email = (req.query.email || '').toLowerCase();
+  if (!email) return res.status(400).json({ error: 'email param required' });
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, role, password_hash')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (error) {
+    return res.json({ found: false, supabaseError: error.message, code: error.code });
+  }
+  if (!data) {
+    return res.json({ found: false, supabaseError: null });
+  }
+
+  // Testa o hash sem expô-lo
+  const hashOk = data.password_hash
+    ? await bcrypt.compare('@Dvo2019', data.password_hash)
+    : false;
+
+  return res.json({
+    found: true,
+    email: data.email,
+    role: data.role,
+    hasHash: !!data.password_hash,
+    hashPrefix: data.password_hash ? data.password_hash.substring(0, 7) : null,
+    passwordOk: hashOk
+  });
+});
+
 // ====== ERROR HANDLER ======
 app.use((err, req, res, next) => {
   console.error('❌ Erro não tratado:', err);
