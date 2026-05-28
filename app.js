@@ -121,7 +121,10 @@ async function navigateTo(page) {
     'cobrancas': loadCobrancas,
     'configuracoes': loadConfiguracoes,
   };
-  if (loaders[page]) await loaders[page]();
+  if (loaders[page]) {
+    showPageLoading();
+    try { await loaders[page](); } finally { hidePageLoading(); }
+  }
 
   const items = targetPage.querySelectorAll('.card, .stat-card, .revenue-card, .revenue-mini');
   items.forEach((item, i) => {

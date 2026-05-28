@@ -120,6 +120,35 @@ async function saveProfile() {
   }
 }
 
+// ── PAGE LOADING BAR ──────────────────────────────────
+function showPageLoading() {
+  let bar = document.getElementById('page-load-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'page-load-bar';
+    bar.style.cssText = [
+      'position:fixed', 'top:0', 'left:0', 'right:0', 'height:3px',
+      'background:var(--p-500)', 'z-index:99999',
+      'transition:width 0.25s ease, opacity 0.3s ease',
+      'width:0', 'opacity:1', 'pointer-events:none'
+    ].join(';');
+    document.body.appendChild(bar);
+  }
+  bar.style.opacity = '1';
+  bar.style.width = '0';
+  requestAnimationFrame(() => { bar.style.width = '70%'; });
+}
+
+function hidePageLoading() {
+  const bar = document.getElementById('page-load-bar');
+  if (!bar) return;
+  bar.style.width = '100%';
+  setTimeout(() => {
+    bar.style.opacity = '0';
+    setTimeout(() => { bar.style.width = '0'; }, 300);
+  }, 200);
+}
+
 // ── MASKS ─────────────────────────────────────────────
 function maskCPF(input) {
   let v = input.value.replace(/\D/g, '').slice(0, 11);

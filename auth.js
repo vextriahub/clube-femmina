@@ -116,8 +116,7 @@ async function doRegister() {
       status_pagamento: 'pending'
     });
 
-    showToast(`Conta criada! Bem-vindo, ${result.user.nome}`, 'success');
-    loginSuccess(result.user, result.token);
+    showWelcomeModal(result.user, result.token);
   } catch (err) {
     console.error('Erro ao registrar:', err);
     const message = window.API.handleError(err) || 'Erro ao criar conta. Tente novamente.';
@@ -161,4 +160,52 @@ function logout() {
   if (auth) auth.style.setProperty('display', 'block', 'important');
 
   showToast('Saiu com sucesso', 'info');
+}
+
+function showWelcomeModal(user, token) {
+  // Fecha o modal de auth primeiro
+  const authModal = document.getElementById('auth-modal');
+  if (authModal) authModal.style.display = 'none';
+
+  document.getElementById('welcome-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'welcome-modal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'display:flex;z-index:10002';
+
+  const primeiroNome = user.nome.split(' ')[0];
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:440px;width:100%;padding:40px;text-align:center">
+      <div style="font-size:52px;margin-bottom:16px">🎉</div>
+      <h2 style="font-size:22px;font-weight:800;color:var(--slate-900);margin:0 0 8px">
+        Bem-vinda, ${primeiroNome}!
+      </h2>
+      <p style="font-size:14px;color:var(--slate-500);margin:0 0 24px;line-height:1.6">
+        Sua conta foi criada com sucesso. Você já tem acesso a todos os benefícios do Clube Femmina.
+      </p>
+
+      <div style="background:linear-gradient(135deg,var(--p-600),var(--p-400));border-radius:12px;padding:20px;margin-bottom:24px;color:#fff">
+        <div style="font-size:11px;opacity:0.8;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Número da carteirinha</div>
+        <div style="font-size:24px;font-weight:800;letter-spacing:0.08em">${user.numero_carteirinha || '—'}</div>
+      </div>
+
+      <div style="text-align:left;background:var(--slate-50);border-radius:10px;padding:16px;margin-bottom:28px">
+        <div style="font-size:13px;font-weight:700;color:var(--slate-700);margin-bottom:10px">Próximos passos</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--slate-600)">
+          <div>✅ Regularize o pagamento para ativar o plano</div>
+          <div>👨‍👩‍👧 Adicione seus dependentes em "Minha conta"</div>
+          <div>📅 Agende sua primeira consulta pela aba "Agendar"</div>
+          <div>📱 Acesse sua carteirinha digital a qualquer hora</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-full" style="font-size:15px;padding:14px" onclick="
+        document.getElementById('welcome-modal').remove();
+        loginSuccess(${JSON.stringify(user)}, ${JSON.stringify(token)});
+      ">Acessar minha conta →</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
 }
