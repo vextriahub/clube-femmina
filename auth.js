@@ -1,14 +1,70 @@
-// ── AUTH ──────────────────────────────────────────────
-function showRegister() {
-  document.getElementById('login-form-wrap').style.display = 'none';
-  document.getElementById('register-form-wrap').style.display = 'block';
+// ── LOGIN PAGE (nova experiência full-screen) ─────────
+
+function showLoginPage() {
+  const page = document.getElementById('login-page');
+  page.style.display = 'flex';
+  // aguarda repaint para disparar transição CSS
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => page.classList.add('lp-visible'));
+  });
+
+  // Restaura e-mail lembrado
+  const remembered = localStorage.getItem('femmina_email');
+  if (remembered) {
+    const emailEl = document.getElementById('lp-email');
+    if (emailEl) {
+      emailEl.value = remembered;
+      document.getElementById('lp-remember').checked = true;
+    }
+  }
+
+  // foco automático após animação
+  setTimeout(() => document.getElementById('lp-email')?.focus(), 350);
 }
 
-function showLogin() {
-  document.getElementById('login-form-wrap').style.display = 'block';
-  document.getElementById('register-form-wrap').style.display = 'none';
+function hideLoginPage() {
+  const page = document.getElementById('login-page');
+  page.classList.remove('lp-visible');
+  setTimeout(() => { page.style.display = 'none'; }, 300);
 }
 
+function lpShowLogin() {
+  document.getElementById('lp-login-wrap').style.display   = '';
+  document.getElementById('lp-register-wrap').style.display = 'none';
+  document.getElementById('lp-tab-login').classList.add('active');
+  document.getElementById('lp-tab-reg').classList.remove('active');
+  clearLoginError();
+  setTimeout(() => document.getElementById('lp-email')?.focus(), 80);
+}
+
+function lpShowRegister() {
+  document.getElementById('lp-login-wrap').style.display   = 'none';
+  document.getElementById('lp-register-wrap').style.display = '';
+  document.getElementById('lp-tab-login').classList.remove('active');
+  document.getElementById('lp-tab-reg').classList.add('active');
+  setTimeout(() => document.getElementById('reg-name')?.focus(), 80);
+}
+
+// show/hide senha — reutilizável para login e registro
+function toggleLpPassword(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon  = document.getElementById(iconId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  // ícone: olho aberto (visível) ou olho fechado (oculto)
+  icon.innerHTML = isHidden
+    ? '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>'
+    : '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+}
+
+function handleRememberEmail() {
+  const checked = document.getElementById('lp-remember').checked;
+  const email   = document.getElementById('lp-email').value.trim();
+  if (checked && email) localStorage.setItem('femmina_email', email);
+  else localStorage.removeItem('femmina_email');
+}
+
+// ── FORGOT PASSWORD ───────────────────────────────────
 function showForgotPassword() {
   document.getElementById('edit-profile-modal')?.remove();
   const modal = document.createElement('div');
@@ -32,36 +88,54 @@ function showForgotPassword() {
   document.body.appendChild(modal);
 }
 
+// ── ERRO DE LOGIN ─────────────────────────────────────
 function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
+  const box  = document.getElementById('login-error');
+  const text = document.getElementById('login-error-text');
+  if (!box) return;
+  if (text) text.textContent = msg;
+  box.style.display = 'flex';
+
+  // shake no painel de inputs
+  const wrap = document.getElementById('lp-login-wrap');
+  if (wrap) {
+    wrap.classList.remove('lp-shake');
+    // força reflow para reiniciar animação
+    void wrap.offsetWidth;
+    wrap.classList.add('lp-shake');
+    wrap.addEventListener('animationend', () => wrap.classList.remove('lp-shake'), { once: true });
+  }
 }
 
 function clearLoginError() {
-  const el = document.getElementById('login-error');
-  if (el) el.style.display = 'none';
+  const box = document.getElementById('login-error');
+  if (box) box.style.display = 'none';
 }
 
+// ── DO LOGIN ──────────────────────────────────────────
 async function doLogin() {
   clearLoginError();
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const password = document.getElementById('login-password').value;
+  const email    = document.getElementById('lp-email').value.trim().toLowerCase();
+  const password = document.getElementById('lp-password').value;
 
   if (!email || !password) {
     showLoginError('Preencha e-mail e senha para continuar.');
     return;
   }
-
   if (!email.includes('@')) {
     showLoginError('E-mail inválido.');
     return;
   }
 
-  const btn = document.getElementById('btn-login');
-  btn.innerHTML = '<span class="spinner"></span> Entrando...';
-  btn.disabled = true;
+  // Salva e-mail se "lembrar" estiver marcado
+  if (document.getElementById('lp-remember')?.checked) {
+    localStorage.setItem('femmina_email', email);
+  }
+
+  const btn   = document.getElementById('btn-login');
+  const label = document.getElementById('btn-login-label');
+  if (btn)   btn.disabled = true;
+  if (label) label.innerHTML = '<span class="spinner"></span> Entrando…';
 
   try {
     const result = await window.API.auth.login(email, password);
@@ -72,37 +146,40 @@ async function doLogin() {
     showLoginError(message);
     showToast(message, 'error');
   } finally {
-    btn.innerHTML = 'Entrar no painel';
-    btn.disabled = false;
+    if (btn)   btn.disabled = false;
+    if (label) label.innerHTML = 'Entrar';
   }
 }
 
+// ── DO REGISTER ───────────────────────────────────────
 async function doRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const cpf = document.getElementById('reg-cpf').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim();
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const name     = document.getElementById('reg-name').value.trim();
+  const cpf      = document.getElementById('reg-cpf').value.trim();
+  const phone    = document.getElementById('reg-phone').value.trim();
+  const email    = document.getElementById('reg-email').value.trim().toLowerCase();
   const password = document.getElementById('reg-password').value;
 
   if (!name || !cpf || !phone || !email || !password) {
     showToast('Preencha todos os campos obrigatórios', 'error');
     return;
   }
-
   if (cpf.replace(/\D/g,'').length !== 11) {
     showToast('CPF inválido (11 dígitos obrigatórios)', 'error');
     return;
   }
-
   if (!email.includes('@')) {
     showToast('E-mail inválido', 'error');
     return;
   }
-
   if (password.length < 8) {
     showToast('Senha deve ter mínimo 8 caracteres', 'error');
     return;
   }
+
+  const btn   = document.getElementById('btn-register');
+  const label = document.getElementById('btn-register-label');
+  if (btn)   btn.disabled = true;
+  if (label) label.innerHTML = '<span class="spinner"></span> Criando conta…';
 
   try {
     const cardNo = genCardNo();
@@ -115,26 +192,29 @@ async function doRegister() {
       numero_carteirinha: cardNo,
       status_pagamento: 'pending'
     });
-
     showWelcomeModal(result.user, result.token);
   } catch (err) {
     console.error('Erro ao registrar:', err);
     const message = window.API.handleError(err) || 'Erro ao criar conta. Tente novamente.';
     showToast(message, 'error');
+  } finally {
+    if (btn)   btn.disabled = false;
+    if (label) label.innerHTML = 'Criar minha conta';
   }
 }
 
+// ── LOGIN SUCCESS ─────────────────────────────────────
 function loginSuccess(user, token) {
   currentUser = user;
-  if (token) {
-    sessionStorage.setItem('token', token);
-  }
+  if (token) sessionStorage.setItem('token', token);
   sessionStorage.setItem('femmina_session', JSON.stringify(user));
   document.body.classList.add('logged-in');
-  document.getElementById('auth-modal').style.display = 'none';
+
+  // Fecha a página de login
+  hideLoginPage();
 
   const auth = document.getElementById('auth-page');
-  const app = document.getElementById('main-app');
+  const app  = document.getElementById('main-app');
   if (auth) auth.style.setProperty('display', 'none', 'important');
   if (app) {
     app.classList.add('app-visible');
@@ -145,6 +225,7 @@ function loginSuccess(user, token) {
   initApp();
 }
 
+// ── CONFIRMAÇÃO DE LOGOUT ─────────────────────────────
 function confirmLogout() {
   document.getElementById('edit-profile-modal')?.remove();
   const modal = document.createElement('div');
@@ -166,6 +247,7 @@ function confirmLogout() {
   document.body.appendChild(modal);
 }
 
+// ── LOGOUT ────────────────────────────────────────────
 function logout() {
   sessionStorage.removeItem('femmina_session');
   sessionStorage.removeItem('token');
@@ -173,7 +255,7 @@ function logout() {
   document.body.classList.remove('logged-in');
 
   const auth = document.getElementById('auth-page');
-  const app = document.getElementById('main-app');
+  const app  = document.getElementById('main-app');
   if (app) {
     app.classList.remove('app-visible');
     app.style.setProperty('display', 'none', 'important');
@@ -183,10 +265,10 @@ function logout() {
   showToast('Saiu com sucesso', 'info');
 }
 
+// ── WELCOME MODAL (pós-registro) ──────────────────────
 function showWelcomeModal(user, token) {
-  // Fecha o modal de auth primeiro
-  const authModal = document.getElementById('auth-modal');
-  if (authModal) authModal.style.display = 'none';
+  // Fecha o login page
+  hideLoginPage();
 
   document.getElementById('welcome-modal')?.remove();
   const modal = document.createElement('div');

@@ -30,56 +30,185 @@
 <script src="app.js"></script>
 <!-- OVERLAYS -->
 <div id="toast-container" class="toast-container"></div>
-<div id="auth-modal" class="modal-overlay" style="display:none; z-index:10000;">
-  <div class="modal auth-modal-content">
-    <button class="btn btn-ghost btn-icon modal-close-btn" onclick="document.getElementById('auth-modal').style.display='none'">✕</button>
-    <div class="auth-form-wrap">
-      <div id="login-form-wrap">
-        <div class="auth-icon-circle">
-          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        </div>
-        <div class="auth-form-title">Acesso Seguro</div>
-        <div class="auth-form-sub">Gerencie sua saúde e seus benefícios</div>
-        <div class="auth-input-group">
-          <input type="email" id="login-email" class="auth-input" placeholder="E-mail de acesso" oninput="clearLoginError()">
-          <svg class="auth-input-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        </div>
-        <div class="auth-input-group">
-          <input type="password" id="login-password" class="auth-input" placeholder="Sua senha" oninput="clearLoginError()">
-          <svg class="auth-input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-        </div>
-        <a href="#" class="auth-forgot" onclick="showForgotPassword();return false">Esqueceu a senha?</a>
-        <button class="auth-btn-primary" onclick="doLogin()" id="btn-login">Entrar no painel</button>
-        <div id="login-error" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:var(--r-50); color:var(--r-600); font-size:13px; font-weight:500; text-align:center;"></div>
-        <div class="auth-divider"><span>Novo por aqui?</span></div>
-        <button class="auth-btn-outline" onclick="showRegister()">Quero me associar agora</button>
-        <details class="demo-details" style="display:none">
-          <summary class="demo-summary">Credenciais de demonstração (desabilitar em produção) <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></summary>
-          <div class="demo-content" style="background:var(--rose-50);border-left:3px solid var(--rose-600);padding:12px 12px;border-radius:4px;font-size:12px;color:var(--rose-700)">
-            <strong>⚠️ APENAS PARA DESENVOLVIMENTO</strong>
-            <div style="margin-top:8px">Contate o administrador para obter credenciais de acesso.</div>
+<!-- ═══════════════════════════════════════════════
+     LOGIN PAGE — full-screen two-panel experience
+     ═══════════════════════════════════════════════ -->
+<div id="login-page">
+  <div class="lp-container">
+
+    <!-- ── LEFT: Brand Panel ── -->
+    <div class="lp-brand-panel">
+      <div class="lp-brand-inner">
+        <div class="lp-brand-logo">
+          <div class="lp-brand-mark">♀</div>
+          <div>
+            <div class="lp-brand-name">Clube Femmina</div>
+            <div class="lp-brand-tagline">BENEFÍCIO POPULAR DE SAÚDE</div>
           </div>
-        </details>
-      </div>
-      <div id="register-form-wrap" style="display:none">
-        <div class="auth-icon-circle">
-          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
         </div>
-        <div class="auth-form-title">Tornar-se Sócio</div>
-        <div class="auth-form-sub">Assine e tenha acesso imediato aos benefícios</div>
-        <div class="form-group" style="margin-bottom:16px;"><input type="text" id="reg-name" class="auth-input" style="padding-left:16px;" placeholder="Seu nome completo"></div>
-        <div class="form-grid" style="gap:12px; margin-bottom:16px;">
-          <div class="form-group" style="margin-bottom:0;"><input type="text" id="reg-cpf" class="auth-input" style="padding-left:16px;" placeholder="CPF" maxlength="14" oninput="maskCPF(this)"></div>
-          <div class="form-group" style="margin-bottom:0;"><input type="text" id="reg-phone" class="auth-input" style="padding-left:16px;" placeholder="Telefone" maxlength="15" oninput="maskPhone(this)"></div>
+        <h2 class="lp-brand-headline">Saúde de qualidade<br><span>para toda a família</span></h2>
+        <div class="lp-brand-benefits">
+          <div class="lp-benefit"><div class="lp-benefit-icon">🩺</div><div>Consultas com até <strong>40% de desconto</strong> garantido</div></div>
+          <div class="lp-benefit"><div class="lp-benefit-icon">📱</div><div>Carteirinha digital sempre disponível no celular</div></div>
+          <div class="lp-benefit"><div class="lp-benefit-icon">👨‍👩‍👧‍👦</div><div>Até <strong>5 dependentes</strong> incluídos na mensalidade</div></div>
+          <div class="lp-benefit"><div class="lp-benefit-icon">📅</div><div>Agendamento online direto pelo painel</div></div>
         </div>
-        <div class="form-group" style="margin-bottom:16px;"><input type="email" id="reg-email" class="auth-input" style="padding-left:16px;" placeholder="Seu e-mail principal"></div>
-        <div class="form-group" style="margin-bottom:24px;"><input type="password" id="reg-password" class="auth-input" style="padding-left:16px;" placeholder="Crie uma senha (mín. 8 caracteres)"></div>
-        <button class="auth-btn-primary" onclick="doRegister()">Concluir Assinatura</button>
-        <div style="text-align:center;margin-top:24px"><button class="btn btn-ghost" style="color:var(--tx3);font-weight:600;" onclick="showLogin()">← Já sou sócio</button></div>
+        <div class="lp-brand-stats">
+          <div class="lp-stat"><div class="lp-stat-num">500+</div><div class="lp-stat-label">Sócias ativas</div></div>
+          <div class="lp-stat"><div class="lp-stat-num">40%</div><div class="lp-stat-label">Desconto médio</div></div>
+          <div class="lp-stat"><div class="lp-stat-num">R$29</div><div class="lp-stat-label">Por mês</div></div>
+        </div>
+        <div class="lp-brand-quote">
+          "O melhor investimento para a saúde da sua família"
+          <div class="lp-brand-quote-author">— Clínica Femmina, Planaltina/DF</div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+
+    <!-- ── RIGHT: Form Panel ── -->
+    <div class="lp-form-panel">
+
+      <!-- Topbar (back + theme toggle) -->
+      <div class="lp-form-topbar">
+        <button class="lp-back-btn" onclick="hideLoginPage()">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Voltar ao início
+        </button>
+        <button class="btn btn-ghost btn-icon" onclick="toggleTheme()" title="Alternar tema" style="font-size:18px;background:var(--surface2);border-radius:50%;min-width:40px;min-height:40px;">💡</button>
+      </div>
+
+      <!-- Mobile-only logo -->
+      <div class="lp-mobile-logo">
+        <div class="lp-mobile-logo-mark">♀</div>
+        <div>
+          <div class="lp-mobile-logo-name">Clube Femmina</div>
+          <div style="font-size:10px;color:var(--tx4);letter-spacing:.1em;text-transform:uppercase;margin-top:1px">Benefício Popular</div>
+        </div>
+      </div>
+
+      <!-- Form inner container -->
+      <div class="lp-form-inner">
+
+        <!-- Tab bar -->
+        <div class="lp-tab-bar" role="tablist">
+          <button id="lp-tab-login" class="lp-tab-btn active" onclick="lpShowLogin()" role="tab">Entrar</button>
+          <button id="lp-tab-reg"   class="lp-tab-btn"        onclick="lpShowRegister()" role="tab">Cadastrar</button>
+        </div>
+
+        <!-- ── LOGIN FORM ── -->
+        <div id="lp-login-wrap">
+          <div class="lp-form-header">
+            <h2 class="lp-form-title">Bem-vinda de volta!</h2>
+            <p class="lp-form-subtitle">Entre com sua conta para acessar o painel</p>
+          </div>
+
+          <div class="lp-field-group">
+            <label class="lp-label" for="lp-email">E-mail</label>
+            <div class="lp-input-box">
+              <svg class="lp-input-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              <input type="email" id="lp-email" class="lp-input" placeholder="seu@email.com"
+                autocomplete="email" oninput="clearLoginError()"
+                onkeydown="if(event.key==='Enter')document.getElementById('lp-password').focus()">
+            </div>
+          </div>
+
+          <div class="lp-field-group">
+            <label class="lp-label" for="lp-password">Senha</label>
+            <div class="lp-input-box">
+              <svg class="lp-input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <input type="password" id="lp-password" class="lp-input lp-has-eye" placeholder="Sua senha"
+                autocomplete="current-password" oninput="clearLoginError()"
+                onkeydown="if(event.key==='Enter')doLogin()">
+              <button type="button" class="lp-eye-btn" onclick="toggleLpPassword('lp-password','lp-eye-icon')" title="Mostrar/ocultar senha" aria-label="Mostrar senha">
+                <svg id="lp-eye-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="lp-row">
+            <label class="lp-remember">
+              <input type="checkbox" id="lp-remember" onchange="handleRememberEmail()">
+              <span>Lembrar e-mail</span>
+            </label>
+            <a href="#" class="lp-forgot" onclick="showForgotPassword();return false">Esqueceu a senha?</a>
+          </div>
+
+          <div id="login-error" class="lp-error-box" style="display:none">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;flex-shrink:0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <span id="login-error-text"></span>
+          </div>
+
+          <button class="lp-submit-btn" id="btn-login" onclick="doLogin()">
+            <span id="btn-login-label">Entrar</span>
+          </button>
+
+          <div class="lp-divider"><span>Não tem conta?</span></div>
+          <button class="lp-alt-btn" onclick="lpShowRegister()">Quero me associar ao Clube</button>
+        </div>
+
+        <!-- ── REGISTER FORM ── -->
+        <div id="lp-register-wrap" style="display:none">
+          <div class="lp-form-header">
+            <h2 class="lp-form-title">Tornar-se Sócia</h2>
+            <p class="lp-form-subtitle">Preencha seus dados — leva menos de 2 minutos</p>
+          </div>
+
+          <div class="lp-field-group">
+            <label class="lp-label" for="reg-name">Nome completo <span class="lp-required">*</span></label>
+            <div class="lp-input-box">
+              <svg class="lp-input-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <input type="text" id="reg-name" class="lp-input" placeholder="Seu nome completo" autocomplete="name">
+            </div>
+          </div>
+
+          <div class="lp-grid-2">
+            <div class="lp-field-group">
+              <label class="lp-label" for="reg-cpf">CPF <span class="lp-required">*</span></label>
+              <div class="lp-input-box">
+                <input type="text" id="reg-cpf" class="lp-input lp-no-icon" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+              </div>
+            </div>
+            <div class="lp-field-group">
+              <label class="lp-label" for="reg-phone">Telefone <span class="lp-required">*</span></label>
+              <div class="lp-input-box">
+                <input type="text" id="reg-phone" class="lp-input lp-no-icon" placeholder="(00) 90000-0000" maxlength="15" oninput="maskPhone(this)">
+              </div>
+            </div>
+          </div>
+
+          <div class="lp-field-group">
+            <label class="lp-label" for="reg-email">E-mail <span class="lp-required">*</span></label>
+            <div class="lp-input-box">
+              <svg class="lp-input-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              <input type="email" id="reg-email" class="lp-input" placeholder="seu@email.com" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="lp-field-group">
+            <label class="lp-label" for="reg-password">Senha <span class="lp-required">*</span></label>
+            <div class="lp-input-box">
+              <svg class="lp-input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <input type="password" id="reg-password" class="lp-input lp-has-eye" placeholder="Mín. 8 caracteres"
+                autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+              <button type="button" class="lp-eye-btn" onclick="toggleLpPassword('reg-password','lp-reg-eye-icon')" title="Mostrar/ocultar senha" aria-label="Mostrar senha">
+                <svg id="lp-reg-eye-icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </button>
+            </div>
+            <div class="lp-hint">A senha deve ter pelo menos 8 caracteres</div>
+          </div>
+
+          <button class="lp-submit-btn" id="btn-register" onclick="doRegister()">
+            <span id="btn-register-label">Criar minha conta</span>
+          </button>
+
+          <div class="lp-divider"><span>Já é sócia?</span></div>
+          <button class="lp-alt-btn" onclick="lpShowLogin()">← Entrar na minha conta</button>
+        </div>
+
+      </div><!-- /lp-form-inner -->
+    </div><!-- /lp-form-panel -->
+  </div><!-- /lp-container -->
+</div><!-- /login-page -->
 
 <div id="auth-page" class="auth-page">
   <div class="auth-side">
@@ -98,7 +227,7 @@
           <!-- ISSUE-10 FIX: aria-label + min touch target size -->
           <button class="btn btn-ghost btn-icon" onclick="toggleTheme()" title="Alternar Tema" aria-label="Alternar entre tema claro e escuro" style="font-size:20px; background: var(--surface2); border-radius: 50%; min-width:44px; min-height:44px;">💡</button>
           <!-- ISSUE-08 FIX: button text adapts on mobile via CSS -->
-          <button class="btn btn-primary btn-access-account" style="font-weight: 600; padding: 12px 24px;" onclick="document.getElementById('auth-modal').style.display='flex'">Acessar minha conta</button>
+          <button class="btn btn-primary btn-access-account" style="font-weight: 600; padding: 12px 24px;" onclick="showLoginPage()">Acessar minha conta</button>
         </div>
       </div>
 
@@ -293,7 +422,7 @@
       <div class="footer-cta">
         <h2>Pare de adiar seus cuidados com a saúde.</h2>
         <p>Proteja você e sua família hoje mesmo por apenas R$ 29,90 ao mês. Menos de 1 real por dia para ter acesso a consultas e exames de qualidade.</p>
-        <button class="btn btn-primary btn-lg" style="background:#fff; color:#0D5BAE; font-weight:600; padding:16px 40px; border-radius:100px; box-shadow:0 8px 24px rgba(0,0,0,0.15);" onclick="document.getElementById('auth-modal').style.display='flex'">Quero me Associar Agora</button>
+        <button class="btn btn-primary btn-lg" style="background:#fff; color:#0D5BAE; font-weight:600; padding:16px 40px; border-radius:100px; box-shadow:0 8px 24px rgba(0,0,0,0.15);" onclick="showLoginPage(); setTimeout(lpShowRegister, 80)">Quero me Associar Agora</button>
       </div>
 
       <div class="footer-info">
