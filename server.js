@@ -257,7 +257,7 @@ app.post('/auth/register', authLimiter, async (req, res) => {
 
     if (error) {
       console.error('❌ Erro ao criar usuário (Supabase):', JSON.stringify(error));
-      return res.status(500).json({ error: 'Erro ao registrar usuário', detail: error.message || error.code });
+      return res.status(500).json({ error: 'Erro ao registrar usuário' });
     }
 
     // Gera token
