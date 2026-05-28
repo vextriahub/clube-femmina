@@ -48,7 +48,7 @@
           <input type="password" id="login-password" class="auth-input" placeholder="Sua senha" oninput="clearLoginError()">
           <svg class="auth-input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
         </div>
-        <a href="#" class="auth-forgot" onclick="return false">Esqueceu a senha?</a>
+        <a href="#" class="auth-forgot" onclick="showForgotPassword();return false">Esqueceu a senha?</a>
         <button class="auth-btn-primary" onclick="doLogin()" id="btn-login">Entrar no painel</button>
         <div id="login-error" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; background:var(--r-50); color:var(--r-600); font-size:13px; font-weight:500; text-align:center;"></div>
         <div class="auth-divider"><span>Novo por aqui?</span></div>
@@ -73,7 +73,7 @@
           <div class="form-group" style="margin-bottom:0;"><input type="text" id="reg-phone" class="auth-input" style="padding-left:16px;" placeholder="Telefone" maxlength="15" oninput="maskPhone(this)"></div>
         </div>
         <div class="form-group" style="margin-bottom:16px;"><input type="email" id="reg-email" class="auth-input" style="padding-left:16px;" placeholder="Seu e-mail principal"></div>
-        <div class="form-group" style="margin-bottom:24px;"><input type="password" id="reg-password" class="auth-input" style="padding-left:16px;" placeholder="Crie uma senha (mín. 6 chars)"></div>
+        <div class="form-group" style="margin-bottom:24px;"><input type="password" id="reg-password" class="auth-input" style="padding-left:16px;" placeholder="Crie uma senha (mín. 8 caracteres)"></div>
         <button class="auth-btn-primary" onclick="doRegister()">Concluir Assinatura</button>
         <div style="text-align:center;margin-top:24px"><button class="btn btn-ghost" style="color:var(--tx3);font-weight:600;" onclick="showLogin()">← Já sou sócio</button></div>
       </div>

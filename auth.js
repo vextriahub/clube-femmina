@@ -9,6 +9,29 @@ function showLogin() {
   document.getElementById('register-form-wrap').style.display = 'none';
 }
 
+function showForgotPassword() {
+  document.getElementById('edit-profile-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'edit-profile-modal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'display:flex;z-index:10001';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:380px;width:100%;padding:32px;text-align:center">
+      <div style="font-size:40px;margin-bottom:16px">🔑</div>
+      <h3 style="font-size:17px;font-weight:700;color:var(--slate-900);margin:0 0 10px">Redefinir senha</h3>
+      <p style="font-size:14px;color:var(--slate-500);margin:0 0 20px;line-height:1.5">
+        Entre em contato com o administrador do Clube Femmina para redefinir sua senha de acesso.
+      </p>
+      <div style="background:var(--blue-50);border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:var(--blue-700)">
+        📞 Clínica Femmina — Planaltina/DF
+      </div>
+      <button class="btn btn-primary w-full" onclick="document.getElementById('edit-profile-modal').remove()">Entendido</button>
+    </div>
+  `;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
 function showLoginError(msg) {
   const el = document.getElementById('login-error');
   if (!el) return;

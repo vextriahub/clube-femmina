@@ -2,7 +2,7 @@
 async function loadMinhaConta() {
   const user = currentUser;
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === user.id);
+  const deps = allDeps.filter(d => d.user_id === user.id || d.usuario_id === user.id);
 
   document.getElementById('profile-info').innerHTML = `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
@@ -122,7 +122,7 @@ async function removeDependent(id) {
 async function loadCarteirinha() {
   const user = currentUser;
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === user.id);
+  const deps = allDeps.filter(d => d.user_id === user.id || d.usuario_id === user.id);
   const container = document.getElementById('cards-list');
 
   container.innerHTML = `
@@ -213,7 +213,7 @@ async function loadAgendar() {
   document.getElementById('appt-date').min = today;
 
   const allDeps = await getDependents();
-  const deps = allDeps.filter(d => d.usuario_id === user.id);
+  const deps = allDeps.filter(d => d.user_id === user.id || d.usuario_id === user.id);
   const select = document.getElementById('appt-patient');
   select.innerHTML = `<option value="titular">Eu mesmo (titular)</option>` +
     deps.map(d => `<option value="${d.id}">${d.nome} (${d.parentesco})</option>`).join('');
